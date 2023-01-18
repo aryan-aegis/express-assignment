@@ -16,4 +16,13 @@ model User {
   username String 
   email String
   phone String 
+  todo Todo[]
+}
+
+model Todo{
+  id Int @id @default(autoincrement())
+  title String
+  status Boolean
+  author User @relation(fields: [authorId], references: [id])
+  authorId Int
 }
