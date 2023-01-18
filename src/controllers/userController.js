@@ -14,4 +14,4 @@ let createUser = async function (req, res) {
   res.status(201).send({ status: true, newUser })
 }
 
-export { createUser }
+export default createUser 

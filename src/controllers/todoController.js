@@ -5,7 +5,7 @@ const prisma = new PrismaClient()
 const createTodo = async (req, res) => {
   const data = req.body
   //todo object like {title:"some task",status:false}
-  const newTodo = await prisma.todo.create({
+  const newTodo = await prisma.ToDo.create({
     data,
   })
 
@@ -19,9 +19,9 @@ const getTodo = async (req, res) => {
         userId : "id of current logged user",
     }
     get all todos based on current logged user */
-  const userDocs = await prisma.todo.findMany({
+  const userDocs = await prisma.ToDo.findMany({
     where: {
-      authorId: userid,
+      userId: userid,
     },
   })
 
@@ -33,7 +33,7 @@ const patchTodo = async (req, res) => {
     headers : {todoid: "id of a todo"}
     pathch a todo of current logged user based on todo id(unique) */
   const data = req.body
-  const patchedDoc = await prisma.todo.update({
+  const patchedDoc = await prisma.ToDo.update({
     where: {
       id: todoid,
     },
@@ -48,7 +48,7 @@ const deleteTodo = async (req, res) => {
   /**
     headers : {todoid: "id of a todo"}
     delete a todo based on id of todo */
-  const delDoc = await prisma.todo.delete({
+  const delDoc = await prisma.ToDo.delete({
     where: {
       id: todoid,
     },
