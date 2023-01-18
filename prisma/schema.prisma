@@ -1,9 +1,5 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
-const config =
-  process.env.NODE_ENV !== 'production' ? await import('dotenv') : null
-
-if (config) config.config()
 
 generator client {
   provider = "prisma-client-js"
@@ -11,7 +7,7 @@ generator client {
 
 datasource db {
   provider = "mysql"
-  url      = process.env.DATABASE_URI 
+  url      = env("DATABASE_URI")
 }
 
 model User {
