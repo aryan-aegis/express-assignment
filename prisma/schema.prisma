@@ -11,18 +11,15 @@ datasource db {
 }
 
 model User {
-
   id Int @id @default(autoincrement())
   username String 
   email String
-  phone String 
-  todo Todo[]
+  number String
 }
 
-model Todo{
+model ToDo{
   id Int @id @default(autoincrement())
-  title String
-  status Boolean
-  author User @relation(fields: [authorId], references: [id])
-  authorId Int
+  content String
+  done Boolean
+  userId Int 
 }
