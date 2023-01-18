@@ -1,6 +1,6 @@
 import express from 'express'
-import { PORT } from './env'
-import router from './routes/public.routes'
+import { PORT } from './env.js'
+import router from './routes/public.routes.js'
 
 const app = express()
 
