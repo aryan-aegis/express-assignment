@@ -1,14 +1,19 @@
-import {Router} from "express";
-import {createTodo,deleteTodo,patchTodo,getTodo} from "../controllers/todoController"
+import { Router } from 'express'
+import {
+  createTodo,
+  deleteTodo,
+  patchTodo,
+  getTodo,
+} from '../controllers/todoController'
 
-let todoRoute = Router();
+let todoRoute = Router()
 
-todoRoute.get("/",getTodo)
+todoRoute.get('/', getTodo)
 
-todoRoute.post("/",createTodo)
+todoRoute.post('/', createTodo)
 
-todoRoute.patch("/",patchTodo)
+todoRoute.patch('/', patchTodo)
 
-todoRoute.delete("/",deleteTodo)
+todoRoute.delete('/', deleteTodo)
 
-export default todoRoute;
+export default todoRoute
