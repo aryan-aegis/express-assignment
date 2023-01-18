@@ -1,9 +1,9 @@
-import express from "express"
-import { PORT } from "./env"
-import router from "./routes/public.routes"
+import express from 'express'
+import { PORT } from './env.js'
+import router from './routes/public.routes.js'
 
 const app = express()
 
-app.use("/", router)
+app.use('/', router)
 
 app.listen(PORT, () => console.log(`Server running on Port ${PORT}`))
