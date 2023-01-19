@@ -7,7 +7,7 @@ const createTodo = async (req, res) => {
   //todo object like {title:"some task",status:false}
   try {
     const newTodo = await prisma.ToDo.create({
-      data,
+      data
     })
 
     res.status(200).send({ newTodo, message: 'todo created' })
@@ -26,8 +26,8 @@ const getTodo = async (req, res) => {
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
-        userId: +userid,
-      },
+        userId: +userid
+      }
     })
 
     res.status(200).send({ userDocs, message: 'get todo done' })
@@ -44,9 +44,9 @@ const patchTodo = async (req, res) => {
   try {
     const patchedDoc = await prisma.ToDo.update({
       where: {
-        id: +todoid,
+        id: +todoid
       },
-      data,
+      data
     })
 
     res.status(200).send({ patchedDoc, message: 'todo patched' })
@@ -63,8 +63,8 @@ const deleteTodo = async (req, res) => {
   try {
     const delDoc = await prisma.ToDo.delete({
       where: {
-        id: +todoid,
-      },
+        id: +todoid
+      }
     })
 
     res.status(200).send({ delDoc, message: 'todo deleted' })
