@@ -13,8 +13,8 @@ datasource db {
 model User {
   id Int @id @default(autoincrement())
   username String 
-  email String
-  number String
+  email String @unique
+  phone String @unique
 }
 
 model ToDo{
