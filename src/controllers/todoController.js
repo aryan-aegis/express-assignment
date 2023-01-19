@@ -11,11 +11,9 @@ const createTodo = async (req, res) => {
     })
 
     res.status(200).send({ newTodo, message: 'todo created' })
+  } catch (e) {
+    res.status(401).send({ message: 'Not fullfilled', error: e })
   }
-  catch (e) {
-    res.status(401).send({ message: "Not fullfilled", error: e });
-  }
-
 }
 
 const getTodo = async (req, res) => {
@@ -33,12 +31,9 @@ const getTodo = async (req, res) => {
     })
 
     res.status(200).send({ userDocs, message: 'get todo done' })
+  } catch (e) {
+    res.status(401).send({ message: 'Not fullfilled', error: e })
   }
-  catch (e) {
-    res.status(401).send({ message: "Not fullfilled", error: e });
-
-  }
-
 }
 const patchTodo = async (req, res) => {
   const { todoid } = req.headers
@@ -56,9 +51,8 @@ const patchTodo = async (req, res) => {
 
     res.status(200).send({ patchedDoc, message: 'todo patched' })
   } catch (e) {
-    res.status(401).send({ message: "Not fullfilled", error: e });
+    res.status(401).send({ message: 'Not fullfilled', error: e })
   }
-
 }
 
 const deleteTodo = async (req, res) => {
@@ -74,11 +68,9 @@ const deleteTodo = async (req, res) => {
     })
 
     res.status(200).send({ delDoc, message: 'todo deleted' })
+  } catch (e) {
+    res.status(401).send({ message: 'Not fullfilled', error: e })
   }
-  catch (e) {
-    res.status(401).send({ message: "Not fullfilled", error: e });
-  }
-
 }
 
 export { createTodo, deleteTodo, patchTodo, getTodo }
