@@ -22,4 +22,5 @@ model ToDo{
   content String
   done Boolean
   userId Int 
+  isDeleted Boolean @default(false)
 }
