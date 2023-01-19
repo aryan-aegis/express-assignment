@@ -3,6 +3,6 @@ import { updateUser, createUser } from '../controllers/userController.js'
 const router = Router()
 
 router.post('/createUser', createUser)
-router.put('/updateUser', updateUser)
+router.patch('/updateUser', updateUser)
 
 export default router
