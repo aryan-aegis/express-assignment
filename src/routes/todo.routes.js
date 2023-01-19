@@ -3,7 +3,7 @@ import {
   createTodo,
   deleteTodo,
   patchTodo,
-  getTodo,
+  getTodo
 } from '../controllers/todoController.js'
 
 let todoRoute = Router()

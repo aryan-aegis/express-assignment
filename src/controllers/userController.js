@@ -7,7 +7,7 @@ export const createUser = async function (req, res) {
   console.log(data)
 
   const newUser = await prisma.user.create({
-    data,
+    data
   })
 
   // console.log(newUser)
@@ -21,8 +21,8 @@ export const updateUser = async (req, res) => {
     data: {
       email: req.body,
       username: req.body,
-      phone: req.body,
-    },
+      phone: req.body
+    }
   })
   res.json(user)
 }
