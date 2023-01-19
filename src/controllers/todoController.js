@@ -4,15 +4,32 @@ const prisma = new PrismaClient()
 
 const createTodo = async (req, res) => {
   const data = req.body
+  console.log(data)
   //todo object like {title:"some task",status:false}
   try {
     const newTodo = await prisma.ToDo.create({
-      data,
+      data
     })
 
     res.status(200).send({ newTodo, message: 'todo created' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e })
+    res.status(401).send({ message: 'Not fullfilled', error: e.message })
+  }
+}
+
+const getSingleTodo = async (req, res) => {
+  let data = req.params;
+  console.log(data);
+  try {
+    const uniqueToDo = await prisma.ToDo.findUnique({
+      where: {
+        id: +data.id
+      }
+    })
+
+    res.status(200).send({ uniqueToDo, message: 'get todo done with content ' + uniqueToDo.content })
+  } catch (e) {
+    res.status(401).send({ message: 'Not fullfilled', error: e.message })
   }
 }
 
@@ -26,8 +43,8 @@ const getTodo = async (req, res) => {
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
-        userId: +userid,
-      },
+        userId: +userid
+      }
     })
 
     res.status(200).send({ userDocs, message: 'get todo done' })
@@ -44,9 +61,9 @@ const patchTodo = async (req, res) => {
   try {
     const patchedDoc = await prisma.ToDo.update({
       where: {
-        id: +todoid,
+        id: +todoid
       },
-      data,
+      data
     })
 
     res.status(200).send({ patchedDoc, message: 'todo patched' })
@@ -63,8 +80,8 @@ const deleteTodo = async (req, res) => {
   try {
     const delDoc = await prisma.ToDo.delete({
       where: {
-        id: +todoid,
-      },
+        id: +todoid
+      }
     })
 
     res.status(200).send({ delDoc, message: 'todo deleted' })
@@ -73,4 +90,4 @@ const deleteTodo = async (req, res) => {
   }
 }
 
-export { createTodo, deleteTodo, patchTodo, getTodo }
+export { createTodo, deleteTodo, patchTodo, getTodo, getSingleTodo }
