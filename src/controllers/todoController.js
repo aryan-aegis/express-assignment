@@ -4,7 +4,7 @@ const prisma = new PrismaClient()
 
 const createTodo = async (req, res) => {
   const data = req.body
-  console.log(data)
+  //console.log(data)
   //todo object like {title:"some task",status:false}
   try {
     const newTodo = await prisma.ToDo.create({
@@ -19,11 +19,12 @@ const createTodo = async (req, res) => {
 
 const getSingleTodo = async (req, res) => {
   let data = req.params;
-  console.log(data);
+  //console.log(data);
   try {
     const uniqueToDo = await prisma.ToDo.findUnique({
       where: {
-        id: +data.id
+        id: +data.id,
+        isDeleted: false,
       }
     })
 
@@ -34,16 +35,17 @@ const getSingleTodo = async (req, res) => {
 }
 
 const getTodo = async (req, res) => {
-  const { userid } = req.headers
+  const { userid } = req.params
   /**
-    headers : {
-        userId : "id of current logged user",
+    params : {
+        id : "id of current logged user",
     }
     get all todos based on current logged user */
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
-        userId: +userid
+        userId: +userid,
+        isDeleted: false,
       }
     })
 
@@ -53,9 +55,9 @@ const getTodo = async (req, res) => {
   }
 }
 const patchTodo = async (req, res) => {
-  const { todoid } = req.headers
+  const { todoid } = req.params
   /**
-    headers : {todoid: "id of a todo"}
+    params : {todoid: "id of a todo"}
     pathch a todo of current logged user based on todo id(unique) */
   const data = req.body
   try {
@@ -73,14 +75,18 @@ const patchTodo = async (req, res) => {
 }
 
 const deleteTodo = async (req, res) => {
-  const { todoid } = req.headers
+  const { todoid } = req.params
   /**
-    headers : {todoid: "id of a todo"}
+    params : {id: "id of a todo"}
     delete a todo based on id of todo */
+  //console.log(req.params)
   try {
-    const delDoc = await prisma.ToDo.delete({
+    const delDoc = await prisma.ToDo.update({
       where: {
         id: +todoid
+      },
+      data:{
+        isDeleted:true,
       }
     })
 
