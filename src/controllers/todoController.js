@@ -26,7 +26,7 @@ const getTodo = async (req, res) => {
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
-        userId: userid,
+        userId: +userid,
       },
     })
 
@@ -44,7 +44,7 @@ const patchTodo = async (req, res) => {
   try {
     const patchedDoc = await prisma.ToDo.update({
       where: {
-        id: todoid,
+        id: +todoid,
       },
       data,
     })
@@ -63,7 +63,7 @@ const deleteTodo = async (req, res) => {
   try {
     const delDoc = await prisma.ToDo.delete({
       where: {
-        id: todoid,
+        id: +todoid,
       },
     })
 
