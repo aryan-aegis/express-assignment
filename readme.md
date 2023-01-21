@@ -15,8 +15,8 @@
 { 
   id: {number, mandatory},
   username: {string, mandatory},
-  email: {string, mandatory},
-  phone: {string, mandatory},
+  email: {string, mandatory, unique},
+  phone: {string, mandatory, unique},
 }
 ```
 
@@ -25,7 +25,8 @@
 ### POST /register
 - Create a user document from request body. Request body must contain username, email and phone.
 - __Response format__
-  - _**On success**_ - Return HTTP status 201. Also return the user document. The response should be a JSON object like [this](#successful-response-structure)
+  - _**On success**_ - Return HTTP status 201. Also return the user document. The response should be
+  like below JSON object 
 ```yaml
 {
     "status": true,
@@ -37,16 +38,13 @@
     }
 }
 ```
-  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like [this](#error-response-structure)
+  - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be like below JSON object (#error-response-structure)
 ```yaml
 {
     "status": true,
     "message": "something went wrong",
 }
 ```
-
-Note: [Bcrypt](https://www.npmjs.com/package/bcrypt)
-Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 
 ## FEATTURE II - Todo
 ### Models
@@ -57,6 +55,7 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
   content: {string,},
   done: {boolean,},
   userId : {number, mandatory},
+  isDeleted : {boolean}
 }
 ```
 
@@ -70,7 +69,7 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 {
     "newTodo": {
         "id": 3,
-        "content": "Learn Elbow lever",
+        "content": "Todo name",
         "done": false,
         "userId": 1
     },
@@ -89,7 +88,7 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 ```
 
 
-### GET / todos
+### GET / todo/all/:userid
 - Fetch all todos based on current logged user's id.
 - __Response format__
   - _**On success**_ - Return HTTP status 200. Also return the todo documents. The response should be a array of JSON object.
@@ -122,9 +121,29 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 - Returns product details by product id
 - __Response format__
   - _**On success**_ - Return HTTP status 200. Also return the product documents. The response should be a JSON object
+```yaml
+{
+    "uniqueToDo": {
+        "id": 1,
+        "content": "Learn Front lever",
+        "done": true,
+        "userId": 1,
+        "isDeleted": false
+    },
+    "message": "get todo done with content "
+}
+```
   - _**On error**_ - Return a suitable error message with a valid HTTP status code.
+```yaml
+{
+    "message": "Not fullfilled",
+    "error": {
+        "clientVersion": "4.9.0"
+    }
+}
+```
 
-### PATCH / todo
+### PATCH / todo/:todoid
 - Updates a todo by changing at least one or all fields
 
 - __Response format__
@@ -133,7 +152,7 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
 {
     "patchedDoc": {
         "id": 2,
-        "content": "fix do 200 push-ups",
+        "content": "New content if provided",
         "done": true,
         "userId": 1
     },
@@ -149,23 +168,38 @@ Send [form-data](https://developer.mozilla.org/en-US/docs/Web/API/FormData)
     }
 }
 ```
-```yaml
 
-```
-
-### DELETE /todo/:id
+### DELETE /todo/:todoid
 - Deletes a product by product id if it's not already deleted
 - __Response format__
   - _**On success**_ - Return HTTP status 200. The response should be a JSON object like 
 ```yaml
-
+{
+    "delDoc": {
+        "id": 7,
+        "content": "Drink water",
+        "done": false,
+        "userId": 1,
+        "isDeleted": true,
+    },
+    "message": "todo deleted",
+}
 ```
   - _**On error**_ - Return a suitable error message with a valid HTTP status code. The response should be a JSON object like 
 ```yaml
-
+{
+    "message": "Not fullfilled",
+    "error": {
+        "code": "P2025",
+        "clientVersion": "4.9.0",
+        "meta": {
+            "cause": "Record to update not found."
+        }
+    }
+}
 ```
 
 ## Testing 
-- To test these apis create a new collection was created in the Postman.
-- Each api should have a new request in this collection
-- Each request in the collection was named rightly. Eg Create user, Create product, Get products etc
+- To test these api's a new collection was created in the Postman.
+- Each api does have a new request in this collection
+- Each request in the collection was named rightly. Eg Create user, Create todo, Get todo etc

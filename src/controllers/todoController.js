@@ -13,7 +13,7 @@ const createTodo = async (req, res) => {
 
     res.status(200).send({ newTodo, message: 'todo created' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e.message })
+    res.status(500).send({ message: 'Not fullfilled', error: e.message })
   }
 }
 
@@ -21,16 +21,16 @@ const getSingleTodo = async (req, res) => {
   let data = req.params;
   //console.log(data);
   try {
-    const uniqueToDo = await prisma.ToDo.findUnique({
+    const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
         id: +data.id,
         isDeleted: false,
       }
     })
 
-    res.status(200).send({ uniqueToDo, message: 'get todo done with content ' + uniqueToDo.content })
+    res.status(200).send({ uniqueToDo, message: 'get todo done with content '})
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e.message })
+    res.status(500).send({ message: 'Not fullfilled', error: e.message })
   }
 }
 
@@ -51,7 +51,7 @@ const getTodo = async (req, res) => {
 
     res.status(200).send({ userDocs, message: 'get todo done' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e })
+    res.status(500).send({ message: 'Not fullfilled', error: e })
   }
 }
 const patchTodo = async (req, res) => {
@@ -70,7 +70,7 @@ const patchTodo = async (req, res) => {
 
     res.status(200).send({ patchedDoc, message: 'todo patched' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e })
+    res.status(500).send({ message: 'Not fullfilled', error: e })
   }
 }
 
@@ -92,7 +92,7 @@ const deleteTodo = async (req, res) => {
 
     res.status(200).send({ delDoc, message: 'todo deleted' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e })
+    res.status(500).send({ message: 'Not fullfilled', error: e })
   }
 }
 
