@@ -4,7 +4,7 @@ const prisma = new PrismaClient()
 
 const createTodo = async (req, res) => {
   const data = req.body
-  console.log(data)
+  //console.log(data)
   //todo object like {title:"some task",status:false}
   try {
     const newTodo = await prisma.ToDo.create({
@@ -13,49 +13,51 @@ const createTodo = async (req, res) => {
 
     res.status(200).send({ newTodo, message: 'todo created' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e.message })
+    res.status(500).send({ message: 'Not fullfilled', error: e.message })
   }
 }
 
 const getSingleTodo = async (req, res) => {
   let data = req.params;
-  console.log(data);
+  //console.log(data);
   try {
-    const uniqueToDo = await prisma.ToDo.findUnique({
+    const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
-        id: +data.id
+        id: +data.id,
+        isDeleted: false,
       }
     })
 
-    res.status(200).send({ uniqueToDo, message: 'get todo done with content ' + uniqueToDo.content })
+    res.status(200).send({ uniqueToDo, message: 'get todo done with content '})
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e.message })
+    res.status(500).send({ message: 'Not fullfilled', error: e.message })
   }
 }
 
 const getTodo = async (req, res) => {
-  const { userid } = req.headers
+  const { userid } = req.params
   /**
-    headers : {
-        userId : "id of current logged user",
+    params : {
+        id : "id of current logged user",
     }
     get all todos based on current logged user */
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
-        userId: +userid
+        userId: +userid,
+        isDeleted: false,
       }
     })
 
     res.status(200).send({ userDocs, message: 'get todo done' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e })
+    res.status(500).send({ message: 'Not fullfilled', error: e })
   }
 }
 const patchTodo = async (req, res) => {
-  const { todoid } = req.headers
+  const { todoid } = req.params
   /**
-    headers : {todoid: "id of a todo"}
+    params : {todoid: "id of a todo"}
     pathch a todo of current logged user based on todo id(unique) */
   const data = req.body
   try {
@@ -68,25 +70,29 @@ const patchTodo = async (req, res) => {
 
     res.status(200).send({ patchedDoc, message: 'todo patched' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e })
+    res.status(500).send({ message: 'Not fullfilled', error: e })
   }
 }
 
 const deleteTodo = async (req, res) => {
-  const { todoid } = req.headers
+  const { todoid } = req.params
   /**
-    headers : {todoid: "id of a todo"}
+    params : {id: "id of a todo"}
     delete a todo based on id of todo */
+  //console.log(req.params)
   try {
-    const delDoc = await prisma.ToDo.delete({
+    const delDoc = await prisma.ToDo.update({
       where: {
         id: +todoid
+      },
+      data:{
+        isDeleted:true,
       }
     })
 
     res.status(200).send({ delDoc, message: 'todo deleted' })
   } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e })
+    res.status(500).send({ message: 'Not fullfilled', error: e })
   }
 }
 
