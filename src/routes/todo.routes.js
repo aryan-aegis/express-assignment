@@ -4,16 +4,19 @@ import {
   deleteTodo,
   patchTodo,
   getTodo,
+  getSingleTodo
 } from '../controllers/todoController.js'
 
 let todoRoute = Router()
 
-todoRoute.get('/', getTodo)
+todoRoute.get('/all/:userid', getTodo)
+
+todoRoute.get('/:id', getSingleTodo)
 
 todoRoute.post('/', createTodo)
 
-todoRoute.patch('/', patchTodo)
+todoRoute.patch('/:todoid', patchTodo)
 
-todoRoute.delete('/', deleteTodo)
+todoRoute.delete('/:todoid', deleteTodo)
 
 export default todoRoute
