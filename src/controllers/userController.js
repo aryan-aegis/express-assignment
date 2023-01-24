@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import validateEmail from '../validation/userValidation.js'
-import validateNumber from '../validation/PhoneValidation.js'
+import {validateEmail,validateNumber} from '../validation/userValidation.js'
 
 /**
  * @typedef {Object} userBody
