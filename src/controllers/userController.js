@@ -18,16 +18,25 @@ const prisma = new PrismaClient()
  */
 export const createUser = async function (req, res) {
   let data = req.body
-  if (!validateEmail(data.email)) {
-    res.status(400).send({ status: false, message: 'Enter valid email' })
-  } else if (!validateNumber(data.phone)) {
-    res.status(400).send({ status: false, message: 'Enter valid phone number' })
-  } else {
-    const newUser = await prisma.user.create({
+
+  let keyArray = ["username","phone","email"]
+  if(!Object.keys(req.body).every((elem) => keyArray.includes(elem)) || Object.keys(req.body).length !=3)
+  return res.status(400).send({message:"All keys should be given and in this format ['username','phone','email'] "})
+
+  if (!validateEmail(data.email)) 
+    return res.status(400).send({ status: false, message: 'Enter valid email' })
+  if (!validateNumber(data.phone)) 
+    return res.status(400).send({ status: false, message: 'Enter valid phone number' })
+
+    let newUser=null
+
+    try{ newUser = await prisma.user.create({
       data
-    })
-    res.status(201).send({ status: true, newUser })
-  }
+    })}
+    catch(err)
+    {return res.status(400).send({message:"phonenumber and email should be unique"})}
+
+    return res.status(201).send({ status: true, newUser })
 }
 
 /**
@@ -37,21 +46,29 @@ export const createUser = async function (req, res) {
  */
 export const updateUser = async (req, res) => {
   const { email, username, phone } = req.body
-  if (!validateEmail(email)) {
-    res.status(400).send({ status: false, message: 'Enter valid email' })
-  } else if (!validateNumber(phone)) {
-    res.status(400).send({ status: false, message: 'Enter valid phone number' })
-  } else {
-    const user = await prisma.user.update({
-      where: { email },
+  const id = req.params.id
+
+  let keyArray = ["username","phone","email"]
+  if(!Object.keys(req.body).every((elem) => keyArray.includes(elem)))
+  return res.status(400).send({message:"Keys should be in this format ['username','phone','email'] "})
+
+
+  if (!validateEmail(email)) 
+    return res.status(400).send({ status: false, message: 'Enter valid email' })
+  if (!validateNumber(phone)) 
+    return res.status(400).send({ status: false, message: 'Enter valid phone number' })
+ 
+    let user=null
+   try{  user = await prisma.user.update({
+      where: { id:+id },
       data: {
         email,
         username,
         phone
       }
-    })
-    res.status(201).send({ status: true, user })
-  }
+    })}catch(err)
+    {return res.status(404).send({message:"User not found with given id"})}
+    return res.status(200).send({ status: true, user })
 }
 
 /**
@@ -62,17 +79,28 @@ export const updateUser = async (req, res) => {
 export const getUser = async function (req, res) {
   let data = req.params
 
-  try {
     const user = await prisma.user.findUnique({
       where: {
         id: +data.id
+    }})
+
+    if(!user)
+    return res.status(404).send({message:"user not found"})
+
+    return res
+      .status(200)
+      .send({ user, message: 'user found with username ' + user.username })
+
+}
+
+export const deleteUser = async (req, res) => {
+  const { id } = req.params
+
+    const delDoc = await prisma.User.delete({
+      where: {
+        id: +id
       }
     })
 
-    res
-      .status(200)
-      .send({ user, message: 'user found with username' + user.username })
-  } catch (e) {
-    res.status(401).send({ message: 'Not fullfilled', error: e.message })
-  }
+    return res.status(200).send({ delDoc, message: 'todo deleted' })
 }
