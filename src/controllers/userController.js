@@ -77,7 +77,6 @@ export const updateUser = async (req, res) => {
  */
 export const getUser = async function (req, res) {
   let data = req.params
-
     const user = await prisma.user.findUnique({
       where: {
         id: +data.id
