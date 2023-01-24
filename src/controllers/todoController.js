@@ -45,6 +45,7 @@ const getSingleTodo = async (req, res) => {
 
     res.status(200).send({ uniqueToDo, message: 'get todo done with content ' })
   } catch (e) {
+    console.log(e)
     res.status(500).send({ message: 'Not fullfilled', error: e.message })
   }
 }
