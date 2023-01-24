@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import validateEmail from '../validation/EmailVailidation.js'
+import validateEmail from '../validation/userValidation.js'
 import validateNumber from '../validation/PhoneValidation.js'
 
 /**

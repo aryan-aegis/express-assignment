@@ -1,5 +1,5 @@
 // import {createUser, getUser, updateUser} from './userController.js'
-import validateEmail from '../src/validation/EmailVailidation.js'
+import validateEmail from '../src/validation/userValidation.js'
 import validateNumber from '../src/validation/PhoneValidation.js'
 //why two files?
 const request = require("supertest")
