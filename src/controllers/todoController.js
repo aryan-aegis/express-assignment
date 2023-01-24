@@ -18,12 +18,12 @@ const prisma = new PrismaClient()
 const createTodo = async (req, res) => {
   const data = req.body
   const user = await prisma.user.findUnique({
-    where:{
-      id:+data.userId
+    where: {
+      id: +data.userId
     }
   })
-  if(!user){
-    return res.status(404).send({message:"User not found!"})
+  if (!user) {
+    return res.status(404).send({ message: 'User not found!' })
   }
   try {
     const newTodo = await prisma.ToDo.create({
@@ -32,7 +32,9 @@ const createTodo = async (req, res) => {
 
     res.status(201).send({ newTodo, message: 'todo created' })
   } catch (e) {
-    res.status(400).send({ message: 'Something went wrong, try again', error: e.message })
+    res
+      .status(400)
+      .send({ message: 'Something went wrong, try again', error: e.message })
   }
 }
 
@@ -44,12 +46,12 @@ const createTodo = async (req, res) => {
 const getSingleTodo = async (req, res) => {
   let data = req.params
   const user = await prisma.user.findUnique({
-    where:{
-      id:+data.userId
+    where: {
+      id: +data.id
     }
   })
-  if(!user){
-    return res.status(404).send({message:"User not found!"})
+  if (!user) {
+    return res.status(404).send({ message: 'User not found!' })
   }
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
@@ -74,12 +76,12 @@ const getTodo = async (req, res) => {
   const { userid } = req.params
 
   const user = await prisma.user.findUnique({
-    where:{
-      id:+data.userId
+    where: {
+      id: +userid
     }
   })
-  if(!user){
-    return res.status(404).send({message:"User not found!"})
+  if (!user) {
+    return res.status(404).send({ message: 'User not found!' })
   }
   try {
     const userDocs = await prisma.ToDo.findMany({
