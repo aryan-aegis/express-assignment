@@ -18,17 +18,17 @@ const createTodo = async (req, res) => {
 }
 
 const getSingleTodo = async (req, res) => {
-  let data = req.params;
+  let data = req.params
   //console.log(data);
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
         id: +data.id,
-        isDeleted: false,
+        isDeleted: false
       }
     })
 
-    res.status(200).send({ uniqueToDo, message: 'get todo done with content '})
+    res.status(200).send({ uniqueToDo, message: 'get todo done with content ' })
   } catch (e) {
     res.status(500).send({ message: 'Not fullfilled', error: e.message })
   }
@@ -45,7 +45,7 @@ const getTodo = async (req, res) => {
     const userDocs = await prisma.ToDo.findMany({
       where: {
         userId: +userid,
-        isDeleted: false,
+        isDeleted: false
       }
     })
 
@@ -85,8 +85,8 @@ const deleteTodo = async (req, res) => {
       where: {
         id: +todoid
       },
-      data:{
-        isDeleted:true,
+      data: {
+        isDeleted: true
       }
     })
 
