@@ -23,12 +23,10 @@ export const createUser = async function (req, res) {
     !Object.keys(req.body).every((elem) => keyArray.includes(elem)) ||
     Object.keys(req.body).length != 3
   )
-    return res
-      .status(400)
-      .send({
-        message:
-          "All keys should be given and in this format ['username','phone','email'] "
-      })
+    return res.status(400).send({
+      message:
+        "All keys should be given and in this format ['username','phone','email'] "
+    })
 
   if (!validateEmail(data.email))
     return res.status(400).send({ status: false, message: 'Enter valid email' })
@@ -63,11 +61,9 @@ export const updateUser = async (req, res) => {
 
   let keyArray = ['username', 'phone', 'email']
   if (!Object.keys(req.body).every((elem) => keyArray.includes(elem)))
-    return res
-      .status(400)
-      .send({
-        message: "Keys should be in this format ['username','phone','email'] "
-      })
+    return res.status(400).send({
+      message: "Keys should be in this format ['username','phone','email'] "
+    })
 
   if (!validateEmail(email))
     return res.status(400).send({ status: false, message: 'Enter valid email' })
