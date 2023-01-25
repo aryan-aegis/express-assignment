@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import ApiError from '../error/ApiError.js'
 
 /**
  * @typedef {Object} todoBody
@@ -15,16 +16,31 @@ const prisma = new PrismaClient()
  * @param {Express.Request} req - Express Request Object containing the new ToDo data in the body {@link todoBody}
  * @param {Express.Response} res - Express Response Object
  */
-const createTodo = async (req, res) => {
+const createTodo = async (req, res, next) => {
   const data = req.body
+  const user = await prisma.user.findUnique({
+    where: {
+      id: +data.userId
+    }
+  })
+
+  if (!user) {
+    next(ApiError.NotFound('User Does not exist'))
+    return
+  }
   try {
     const newTodo = await prisma.ToDo.create({
       data
     })
 
-    res.status(200).send({ newTodo, message: 'todo created' })
+    res.status(201).send({ newTodo, message: 'Task created successfully' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e.message })
+    next(
+      ApiError.internalServerError(
+        'Something went wrong, Please try again later!'
+      )
+    )
+    return
   }
 }
 
@@ -33,8 +49,16 @@ const createTodo = async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-const getSingleTodo = async (req, res) => {
+const getSingleTodo = async (req, res, next) => {
   let data = req.params
+  const user = await prisma.user.findUnique({
+    where: {
+      id: +data.id
+    }
+  })
+  if (!user) {
+    return next(ApiError.NotFound('User does not exist'))
+  }
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
@@ -43,10 +67,13 @@ const getSingleTodo = async (req, res) => {
       }
     })
 
-    res.status(200).send({ uniqueToDo, message: 'get todo done with content ' })
+    res.status(200).send({ uniqueToDo, message: 'successful' })
   } catch (e) {
-    console.log(e)
-    res.status(500).send({ message: 'Not fullfilled', error: e.message })
+    return next(
+      ApiError.internalServerError(
+        'Something went wrong, Please try again later'
+      )
+    )
   }
 }
 
@@ -55,8 +82,17 @@ const getSingleTodo = async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-const getTodo = async (req, res) => {
+const getTodo = async (req, res, next) => {
   const { userid } = req.params
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: +userid
+    }
+  })
+  if (!user) {
+    return next(ApiError.NotFound('User does not exist'))
+  }
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
@@ -67,7 +103,7 @@ const getTodo = async (req, res) => {
 
     res.status(200).send({ userDocs, message: 'get todo done' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    return next(ApiError.userNotFound('Task does not exist'))
   }
 }
 
@@ -76,7 +112,7 @@ const getTodo = async (req, res) => {
  * @param {Express.Request} req - Express Request Object containing the updated ToDo data {@link todoBody}
  * @param {Express.Response} res - Express Response Object
  */
-const patchTodo = async (req, res) => {
+const patchTodo = async (req, res, next) => {
   const { todoid } = req.params
   const data = req.body
   try {
@@ -87,9 +123,9 @@ const patchTodo = async (req, res) => {
       data
     })
 
-    res.status(200).send({ patchedDoc, message: 'todo patched' })
+    res.status(200).send({ patchedDoc, message: 'Task updated successfully' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    return next(ApiError.NotFound('Task does not exist'))
   }
 }
 
@@ -98,7 +134,7 @@ const patchTodo = async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-const deleteTodo = async (req, res) => {
+const deleteTodo = async (req, res, next) => {
   const { todoid } = req.params
   try {
     const delDoc = await prisma.ToDo.update({
@@ -110,9 +146,9 @@ const deleteTodo = async (req, res) => {
       }
     })
 
-    res.status(200).send({ delDoc, message: 'todo deleted' })
+    res.status(204).send({ delDoc, message: 'Task deleted successfully' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    return next(ApiError.NotFound('Task does not exist'))
   }
 }
 

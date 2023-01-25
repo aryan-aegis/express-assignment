@@ -21,7 +21,4 @@ function validateNumber(input_str) {
   return re.test(input_str)
 }
 
-export  {validateNumber,validateEmail}
-
-
-
+export { validateNumber, validateEmail }

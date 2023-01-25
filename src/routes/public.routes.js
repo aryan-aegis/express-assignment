@@ -13,6 +13,4 @@ router.get('/:id', getUser)
 //for testing
 router.delete('/:id', deleteUser)
 
-
-
 export default router

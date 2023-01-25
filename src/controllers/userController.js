@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client'
-import {validateEmail,validateNumber} from '../validation/userValidation.js'
-
+import { validateEmail, validateNumber } from '../validation/userValidation.js'
+import ApiError from '../error/ApiError.js'
 /**
  * @typedef {Object} userBody
  * @property {string} username - The name of the user
@@ -15,27 +15,43 @@ const prisma = new PrismaClient()
  * @param {Express.Request} req - Express Request Object containing the User data in the body {@link userBody}
  * @param {Express.Response} res
  */
-export const createUser = async function (req, res) {
+export const createUser = async function (req, res, next) {
   let data = req.body
 
-  let keyArray = ["username","phone","email"]
-  if(!Object.keys(req.body).every((elem) => keyArray.includes(elem)) || Object.keys(req.body).length !=3)
-  return res.status(400).send({message:"All keys should be given and in this format ['username','phone','email'] "})
+  let keyArray = ['username', 'phone', 'email']
+  if (
+    !Object.keys(req.body).every((elem) => keyArray.includes(elem)) ||
+    Object.keys(req.body).length != 3
+  ) {
+    next(
+      ApiError.badRequest(
+        "All keys should be given and in this format ['username','phone','email']"
+      )
+    )
+    return
+  }
 
-  if (!validateEmail(data.email)) 
-    return res.status(400).send({ status: false, message: 'Enter valid email' })
-  if (!validateNumber(data.phone)) 
-    return res.status(400).send({ status: false, message: 'Enter valid phone number' })
+  if (!validateEmail(data.email)) {
+    next(ApiError.badRequest('Please Enter Valid Email'))
+    return
+  }
 
-    let newUser=null
+  if (!validateNumber(data.phone)) {
+    next(ApiError.badRequest('Please Enter Valid Phone Number'))
+    return
+  }
 
-    try{ newUser = await prisma.user.create({
+  let newUser = null
+
+  try {
+    newUser = await prisma.user.create({
       data
-    })}
-    catch(err)
-    {return res.status(400).send({message:"phonenumber and email should be unique"})}
+    })
+  } catch (err) {
+    return next(ApiError.badRequest('Already Exists Email or Phone number'))
+  }
 
-    return res.status(201).send({ status: true, newUser })
+  return res.status(201).send({ status: true, newUser })
 }
 
 /**
@@ -43,31 +59,37 @@ export const createUser = async function (req, res) {
  * @param {Express.Request} req - Express Request Object containing the User data in the body {@link userBody}
  * @param {Express.Response} res
  */
-export const updateUser = async (req, res) => {
+export const updateUser = async (req, res, next) => {
   const { email, username, phone } = req.body
   const id = req.params.id
 
-  let keyArray = ["username","phone","email"]
-  if(!Object.keys(req.body).every((elem) => keyArray.includes(elem)))
-  return res.status(400).send({message:"Keys should be in this format ['username','phone','email'] "})
+  let keyArray = ['username', 'phone', 'email']
+  if (!Object.keys(req.body).every((elem) => keyArray.includes(elem)))
+    return next(
+      ApiError.badRequest(
+        "Keys should be in this format ['username','phone','email']"
+      )
+    )
 
+  if (!validateEmail(email))
+    return next(ApiError.badRequest('Please Enter valid email'))
+  if (!validateNumber(phone))
+    return next(ApiError.badRequest('Please Enter valid phone number'))
 
-  if (!validateEmail(email)) 
-    return res.status(400).send({ status: false, message: 'Enter valid email' })
-  if (!validateNumber(phone)) 
-    return res.status(400).send({ status: false, message: 'Enter valid phone number' })
- 
-    let user=null
-   try{  user = await prisma.user.update({
-      where: { id:+id },
+  let user = null
+  try {
+    user = await prisma.user.update({
+      where: { id: +id },
       data: {
         email,
         username,
         phone
       }
-    })}catch(err)
-    {return res.status(404).send({message:"User not found with given id"})}
-    return res.status(200).send({ status: true, user })
+    })
+  } catch (err) {
+    return next(ApiError.NotFound('User not found'))
+  }
+  return res.status(200).send({ status: true, user })
 }
 
 /**
@@ -75,30 +97,29 @@ export const updateUser = async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-export const getUser = async function (req, res) {
+export const getUser = async function (req, res, next) {
   let data = req.params
-    const user = await prisma.user.findUnique({
-      where: {
-        id: +data.id
-    }})
+  const user = await prisma.user.findUnique({
+    where: {
+      id: +data.id
+    }
+  })
 
-    if(!user)
-    return res.status(404).send({message:"user not found"})
+  if (!user) return next(ApiError.NotFound('User Does not exist'))
 
-    return res
-      .status(200)
-      .send({ user, message: 'user found with username ' + user.username })
-
+  return res
+    .status(200)
+    .send({ user, message: 'user found with username ' + user.username })
 }
 
 export const deleteUser = async (req, res) => {
   const { id } = req.params
 
-    const delDoc = await prisma.User.delete({
-      where: {
-        id: +id
-      }
-    })
+  const delDoc = await prisma.User.delete({
+    where: {
+      id: +id
+    }
+  })
 
-    return res.status(200).send({ delDoc, message: 'todo deleted' })
+  return res.status(200).send({ delDoc, message: 'Successfully deleted!' })
 }
