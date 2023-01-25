@@ -74,6 +74,15 @@ const getSingleTodo = async (req, res) => {
  */
 const getTodo = async (req, res) => {
   const { userid } = req.params
+
+  const user = await prisma.user.findUnique({
+    where: {
+      id: +userid
+    }
+  })
+  if (!user) {
+    return res.status(404).send({ message: 'User not found!' })
+  }
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
