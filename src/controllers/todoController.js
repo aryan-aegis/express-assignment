@@ -1,5 +1,5 @@
 import { PrismaClient } from '@prisma/client'
-import ApiError from '../error/ApiError.js';
+import ApiError from '../error/ApiError.js'
 
 /**
  * @typedef {Object} todoBody
@@ -25,8 +25,8 @@ const createTodo = async (req, res, next) => {
   })
 
   if (!user) {
-    next(ApiError.NotFound("User Does not exist"))
-    return;
+    next(ApiError.NotFound('User Does not exist'))
+    return
   }
   try {
     const newTodo = await prisma.ToDo.create({
@@ -35,8 +35,12 @@ const createTodo = async (req, res, next) => {
 
     res.status(201).send({ newTodo, message: 'Task created successfully' })
   } catch (e) {
-    next(ApiError.internalServerError('Something went wrong, Please try again later!'))
-    return;
+    next(
+      ApiError.internalServerError(
+        'Something went wrong, Please try again later!'
+      )
+    )
+    return
   }
 }
 
@@ -53,7 +57,7 @@ const getSingleTodo = async (req, res, next) => {
     }
   })
   if (!user) {
-    return next(ApiError.NotFound("User does not exist"))
+    return next(ApiError.NotFound('User does not exist'))
   }
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
@@ -65,7 +69,11 @@ const getSingleTodo = async (req, res, next) => {
 
     res.status(200).send({ uniqueToDo, message: 'successful' })
   } catch (e) {
-    return next(ApiError.internalServerError("Something went wrong, Please try again later"))
+    return next(
+      ApiError.internalServerError(
+        'Something went wrong, Please try again later'
+      )
+    )
   }
 }
 
@@ -83,7 +91,7 @@ const getTodo = async (req, res, next) => {
     }
   })
   if (!user) {
-    return next(ApiError.NotFound("User does not exist")) 
+    return next(ApiError.NotFound('User does not exist'))
   }
   try {
     const userDocs = await prisma.ToDo.findMany({
@@ -95,7 +103,7 @@ const getTodo = async (req, res, next) => {
 
     res.status(200).send({ userDocs, message: 'get todo done' })
   } catch (e) {
-    return next(ApiError.userNotFound("Task does not exist"))
+    return next(ApiError.userNotFound('Task does not exist'))
   }
 }
 
@@ -117,7 +125,7 @@ const patchTodo = async (req, res, next) => {
 
     res.status(200).send({ patchedDoc, message: 'Task updated successfully' })
   } catch (e) {
-    return next(ApiError.NotFound("Task does not exist"))
+    return next(ApiError.NotFound('Task does not exist'))
   }
 }
 
@@ -140,7 +148,7 @@ const deleteTodo = async (req, res, next) => {
 
     res.status(204).send({ delDoc, message: 'Task deleted successfully' })
   } catch (e) {
-    return next(ApiError.NotFound("Task does not exist"))
+    return next(ApiError.NotFound('Task does not exist'))
   }
 }
 
