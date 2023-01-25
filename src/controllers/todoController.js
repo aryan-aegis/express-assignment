@@ -1,6 +1,5 @@
 import { PrismaClient } from '@prisma/client'
 
-
 /**
  * @typedef {Object} todoBody
  * @property {string} content - content of the ToDo
