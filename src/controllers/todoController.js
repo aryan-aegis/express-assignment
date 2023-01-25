@@ -17,14 +17,24 @@ const prisma = new PrismaClient()
  */
 const createTodo = async (req, res) => {
   const data = req.body
+  const user = await prisma.user.findUnique({
+    where: {
+      id: +data.userId
+    }
+  })
+  if (!user) {
+    return res.status(404).send({ message: 'User not found!' })
+  }
   try {
     const newTodo = await prisma.ToDo.create({
       data
     })
 
-    res.status(200).send({ newTodo, message: 'todo created' })
+    res.status(201).send({ newTodo, message: 'todo created' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e.message })
+    res
+      .status(400)
+      .send({ message: 'Something went wrong, try again', error: e.message })
   }
 }
 
@@ -35,6 +45,14 @@ const createTodo = async (req, res) => {
  */
 const getSingleTodo = async (req, res) => {
   let data = req.params
+  const user = await prisma.user.findUnique({
+    where: {
+      id: +data.id
+    }
+  })
+  if (!user) {
+    return res.status(404).send({ message: 'User not found!' })
+  }
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
@@ -43,10 +61,9 @@ const getSingleTodo = async (req, res) => {
       }
     })
 
-    res.status(200).send({ uniqueToDo, message: 'get todo done with content ' })
+    res.status(200).send({ uniqueToDo, message: 'successful' })
   } catch (e) {
-    console.log(e)
-    res.status(500).send({ message: 'Not fullfilled', error: e.message })
+    res.status(400).send({ message: 'something went wrong', error: e.message })
   }
 }
 
@@ -67,7 +84,7 @@ const getTodo = async (req, res) => {
 
     res.status(200).send({ userDocs, message: 'get todo done' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    res.status(404).send({ message: 'todo not found', error: e })
   }
 }
 
@@ -89,7 +106,7 @@ const patchTodo = async (req, res) => {
 
     res.status(200).send({ patchedDoc, message: 'todo patched' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    res.status(404).send({ message: 'todo not found', error: e })
   }
 }
 
@@ -110,9 +127,9 @@ const deleteTodo = async (req, res) => {
       }
     })
 
-    res.status(200).send({ delDoc, message: 'todo deleted' })
+    res.status(204).send({ delDoc, message: 'todo deleted' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    res.status(404).send({ message: 'todo not found', error: e })
   }
 }
 
