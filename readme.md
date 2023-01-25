@@ -46,7 +46,7 @@
 }
 ```
 
-## FEATTURE II - Todo
+## FEATURE II - Todo
 ### Models
 - Todo Model
 ```yaml
@@ -118,9 +118,9 @@
 
 
 ### GET / todo/:id
-- Returns product details by product id
+- Returns todo details by todo id
 - __Response format__
-  - _**On success**_ - Return HTTP status 200. Also return the product documents. The response should be a JSON object
+  - _**On success**_ - Return HTTP status 200. Also return the todo documents. The response should be a JSON object
 ```yaml
 {
     "uniqueToDo": {
@@ -147,7 +147,7 @@
 - Updates a todo by changing at least one or all fields
 
 - __Response format__
-  - _**On success**_ - Return HTTP status 200. Also return the updated product document. The response should be a JSON object like 
+  - _**On success**_ - Return HTTP status 200. Also return the updated todo document. The response should be a JSON object like 
 ```yaml
 {
     "patchedDoc": {
@@ -170,7 +170,7 @@
 ```
 
 ### DELETE /todo/:todoid
-- Deletes a product by product id if it's not already deleted
+- Deletes a todo by todo id if it's not already deleted
 - __Response format__
   - _**On success**_ - Return HTTP status 200. The response should be a JSON object like 
 ```yaml

@@ -17,7 +17,6 @@ const prisma = new PrismaClient()
  */
 const createTodo = async (req, res) => {
   const data = req.body
-
   try {
     const newTodo = await prisma.ToDo.create({
       data
@@ -36,7 +35,6 @@ const createTodo = async (req, res) => {
  */
 const getSingleTodo = async (req, res) => {
   let data = req.params
-
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
@@ -59,7 +57,6 @@ const getSingleTodo = async (req, res) => {
  */
 const getTodo = async (req, res) => {
   const { userid } = req.params
-
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
