@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client'
 
+
 /**
  * @typedef {Object} todoBody
  * @property {string} content - content of the ToDo
@@ -17,6 +18,7 @@ const prisma = new PrismaClient()
  */
 const createTodo = async (req, res) => {
   const data = req.body
+
   try {
     const newTodo = await prisma.ToDo.create({
       data
