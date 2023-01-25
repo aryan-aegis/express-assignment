@@ -87,7 +87,7 @@ export const updateUser = async (req, res, next) => {
       }
     })
   } catch (err) {
-    return next(ApiError.badRequest('User not found'))
+    return next(ApiError.NotFound('User not found'))
   }
   return res.status(200).send({ status: true, user })
 }
@@ -105,7 +105,7 @@ export const getUser = async function (req, res, next) {
     }
   })
 
-  if (!user) return next(ApiError.badRequest('User Does not exist'))
+  if (!user) return next(ApiError.NotFound('User Does not exist'))
 
   return res
     .status(200)

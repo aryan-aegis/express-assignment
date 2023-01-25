@@ -11,6 +11,10 @@ class ApiError {
   static internalServerError(msg) {
     return new ApiError(500, msg)
   }
+
+  static NotFound(msg){
+    return new ApiError(404, msg);
+  }
 }
 
 export default ApiError
