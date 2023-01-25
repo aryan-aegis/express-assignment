@@ -17,7 +17,6 @@ const prisma = new PrismaClient()
  */
 const createTodo = async (req, res) => {
   const data = req.body
-
   try {
     const newTodo = await prisma.ToDo.create({
       data
