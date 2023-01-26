@@ -18,7 +18,10 @@ function validateEmail(emailAdress) {
 function validateNumber(input_str) {
   var re = /^\(?(\d{3})\)?[- ]?(\d{3})[- ]?(\d{4})$/
 
-  return re.test(input_str)
+  if(typeof input_str =="string" && re.test(input_str))
+  return true
+  else 
+  return false
 }
 
 export { validateNumber, validateEmail }

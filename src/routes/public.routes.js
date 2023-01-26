@@ -12,11 +12,17 @@ import {
   authorization
 } from '../authentication/authentication.js'
 
+import {
+  createUserVal,
+  loginUserVal,
+  updateUserVal
+} from '../validation/payloadValidation.js'
+
 const router = Router()
 
-router.post('/', createUser)
-router.post('/login', loginUser)
-router.patch('/:id', authentication, authorization, updateUser)
+router.post('/', createUserVal, createUser)
+router.post('/login', loginUserVal, loginUser)
+router.patch('/:id',updateUserVal, authentication, authorization, updateUser)
 router.get('/:id', authentication, getUser)
 //for testing
 router.delete('/:id', authentication, authorization, deleteUser)

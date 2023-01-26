@@ -25,6 +25,8 @@ const createUserVal = function (req, res, next) {
     next(ApiError.badRequest('Please Enter Valid Phone Number'))
     return
   }
+
+  next()
 }
 
 const loginUserVal = function (req, res, next) {
@@ -43,8 +45,10 @@ const loginUserVal = function (req, res, next) {
   }
 
   if (!validateEmail(email))
-    next(ApiError.badRequest('Please Enter Valid Email'))
-  return
+  return next(ApiError.badRequest('Please Enter Valid Email'))
+  
+
+  next()
 }
 
 const updateUserVal = function (req, res, next) {
@@ -65,5 +69,7 @@ const updateUserVal = function (req, res, next) {
   if (phone)
     if (!validateNumber(phone))
       return next(ApiError.badRequest('Please Enter valid phone number'))
+
+  next()
 }
 export { createUserVal, loginUserVal, updateUserVal }
