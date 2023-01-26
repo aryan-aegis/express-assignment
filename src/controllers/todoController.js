@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import ApiError from '../error/ApiError.js'
 
 /**
  * @typedef {Object} todoBody
@@ -15,16 +16,20 @@ const prisma = new PrismaClient()
  * @param {Express.Request} req - Express Request Object containing the new ToDo data in the body {@link todoBody}
  * @param {Express.Response} res - Express Response Object
  */
-const createTodo = async (req, res) => {
+const createTodo = async (req, res, next) => {
+  const { id } = req.params
   const data = req.body
+  data.userId = +id
+
   try {
     const newTodo = await prisma.ToDo.create({
       data
     })
 
-    res.status(200).send({ newTodo, message: 'todo created' })
+    res.status(201).send({ newTodo, message: 'Task created successfully' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e.message })
+    next(ApiError.internalServerError(e.message))
+    return
   }
 }
 
@@ -33,20 +38,22 @@ const createTodo = async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-const getSingleTodo = async (req, res) => {
+const getSingleTodo = async (req, res, next) => {
   let data = req.params
+
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
-        id: +data.id,
+        id: +data.todoid,
         isDeleted: false
       }
     })
 
-    res.status(200).send({ uniqueToDo, message: 'get todo done with content ' })
+    if (!uniqueToDo) next(ApiError.NotFound('Task does not exist'))
+
+    res.status(200).send({ uniqueToDo, message: 'successful' })
   } catch (e) {
-    console.log(e)
-    res.status(500).send({ message: 'Not fullfilled', error: e.message })
+    return next(ApiError.internalServerError(e.message))
   }
 }
 
@@ -55,19 +62,20 @@ const getSingleTodo = async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-const getTodo = async (req, res) => {
-  const { userid } = req.params
+const getTodo = async (req, res, next) => {
+  const { id } = req.params
+
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
-        userId: +userid,
+        userId: +id,
         isDeleted: false
       }
     })
 
     res.status(200).send({ userDocs, message: 'get todo done' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    return next(ApiError.internalServerError(e.message))
   }
 }
 
@@ -76,20 +84,21 @@ const getTodo = async (req, res) => {
  * @param {Express.Request} req - Express Request Object containing the updated ToDo data {@link todoBody}
  * @param {Express.Response} res - Express Response Object
  */
-const patchTodo = async (req, res) => {
+const patchTodo = async (req, res, next) => {
   const { todoid } = req.params
   const data = req.body
   try {
-    const patchedDoc = await prisma.ToDo.update({
+    const patchedDoc = await prisma.ToDo.updateMany({
       where: {
-        id: +todoid
+        id: +todoid,
+        isDeleted: false
       },
       data
     })
 
-    res.status(200).send({ patchedDoc, message: 'todo patched' })
+    res.status(200).send({ patchedDoc, message: 'Task updated successfully' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    return next(ApiError.internalServerError(e.message))
   }
 }
 
@@ -98,21 +107,22 @@ const patchTodo = async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-const deleteTodo = async (req, res) => {
+const deleteTodo = async (req, res, next) => {
   const { todoid } = req.params
   try {
-    const delDoc = await prisma.ToDo.update({
+    const delDoc = await prisma.ToDo.updateMany({
       where: {
-        id: +todoid
+        id: +todoid,
+        isDeleted: false
       },
       data: {
         isDeleted: true
       }
     })
 
-    res.status(200).send({ delDoc, message: 'todo deleted' })
+    res.status(204).send({ delDoc, message: 'Task deleted successfully' })
   } catch (e) {
-    res.status(500).send({ message: 'Not fullfilled', error: e })
+    return next(ApiError.internalServerError(e.message))
   }
 }
 
