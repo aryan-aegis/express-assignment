@@ -2,7 +2,11 @@ import { PrismaClient } from '@prisma/client'
 import ApiError from '../error/ApiError.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import { createUserVal ,loginUserVal, updateUserVal} from '../validation/payloadValidation.js'
+import {
+  createUserVal,
+  loginUserVal,
+  updateUserVal
+} from '../validation/payloadValidation.js'
 /**
  * @typedef {Object} userBody
  * @property {string} username - The name of the user
@@ -18,19 +22,16 @@ const prisma = new PrismaClient()
  * @param {Express.Response} res
  */
 const createUser = async function (req, res, next) {
-  let {username, password,email,phone } = req.body
+  let { username, password, email, phone } = req.body
 
-  createUserVal(req,res,next)
+  createUserVal(req, res, next)
 
   let newUser = null
-  password = await bcrypt.hash(password,10)
+  password = await bcrypt.hash(password, 10)
 
   try {
     newUser = await prisma.user.create({
-      data:{username,
-      password,
-      phone,
-      email}
+      data: { username, password, phone, email }
     })
   } catch (err) {
     return next(ApiError.internalServerError(err.message))
@@ -39,32 +40,32 @@ const createUser = async function (req, res, next) {
   return res.status(201).send({ status: true, newUser })
 }
 
-const loginUser = async function (req,res,next) {
+const loginUser = async function (req, res, next) {
+  let { email, password } = req.body
 
-  let {email, password}  = req.body
+  loginUserVal(req, res, next)
 
-  loginUserVal(req,res,next)
+  let searchUser = await prisma.user.findFirst({
+    where: {
+      email
+    }
+  })
+  if (!searchUser) return next(ApiError.NotFound('User not found'))
 
-  let searchUser = await prisma.user.findFirst(
-    {
-      where:{
-        email
-      }
-    })
-  if(!searchUser) return next(ApiError.NotFound('User not found'))
-
-  let compare = await bcrypt.compare(password,searchUser.password)
-  if(!compare) return next(ApiError.badRequest('Please enter valid password'))
+  let compare = await bcrypt.compare(password, searchUser.password)
+  if (!compare) return next(ApiError.badRequest('Please enter valid password'))
 
   let token = null
-  jwt.sign(searchUser.id.toString(),process.env.SECRET_KEY,function(err,result){
-    if(err)
-    return next(ApiError.badRequest(err.message))
+  jwt.sign(
+    searchUser.id.toString(),
+    process.env.SECRET_KEY,
+    function (err, result) {
+      if (err) return next(ApiError.badRequest(err.message))
 
-    token = result
-    return res.status(200).send({message:"login successful",token})
-  })
-
+      token = result
+      return res.status(200).send({ message: 'login successful', token })
+    }
+  )
 }
 
 /**
@@ -73,22 +74,21 @@ const loginUser = async function (req,res,next) {
  * @param {Express.Response} res
  */
 const updateUser = async (req, res, next) => {
-  
-  const { email, username, phone ,password} = req.body
+  const { email, username, phone, password } = req.body
   const id = req.params.id
 
-
-  updateUserVal(req,res,next)
+  updateUserVal(req, res, next)
 
   let user = null
-    user = await prisma.user.update({
-      where: { id: +id },
-      data: {
-        email,
-        username,
-        phone
-      }
-    })
+  user = await prisma.user.update({
+    where: { id: +id },
+    data: {
+      email,
+      username,
+      phone,
+      password
+    }
+  })
 
   return res.status(200).send({ status: true, user })
 }
@@ -106,7 +106,7 @@ const getUser = async function (req, res, next) {
     }
   })
 
-  if(!user) return next(ApiError.NotFound('User not found'))
+  if (!user) return next(ApiError.NotFound('User not found'))
 
   return res
     .status(200)
@@ -125,4 +125,4 @@ const deleteUser = async (req, res) => {
   return res.status(200).send({ delDoc, message: 'Successfully deleted!' })
 }
 
-export {createUser,updateUser,deleteUser,getUser,loginUser}
+export { createUser, updateUser, deleteUser, getUser, loginUser }

@@ -28,11 +28,7 @@ const createTodo = async (req, res, next) => {
 
     res.status(201).send({ newTodo, message: 'Task created successfully' })
   } catch (e) {
-    next(
-      ApiError.internalServerError(
-        e.message
-      )
-    )
+    next(ApiError.internalServerError(e.message))
     return
   }
 }
@@ -44,7 +40,7 @@ const createTodo = async (req, res, next) => {
  */
 const getSingleTodo = async (req, res, next) => {
   let data = req.params
-  
+
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
@@ -53,15 +49,11 @@ const getSingleTodo = async (req, res, next) => {
       }
     })
 
-    if(!uniqueToDo) next(ApiError.NotFound("Task does not exist"))
+    if (!uniqueToDo) next(ApiError.NotFound('Task does not exist'))
 
     res.status(200).send({ uniqueToDo, message: 'successful' })
   } catch (e) {
-    return next(
-      ApiError.internalServerError(
-        e.message
-      )
-    )
+    return next(ApiError.internalServerError(e.message))
   }
 }
 
@@ -83,11 +75,7 @@ const getTodo = async (req, res, next) => {
 
     res.status(200).send({ userDocs, message: 'get todo done' })
   } catch (e) {
-    return next(
-      ApiError.internalServerError(
-        e.message
-      )
-    )
+    return next(ApiError.internalServerError(e.message))
   }
 }
 
@@ -103,18 +91,14 @@ const patchTodo = async (req, res, next) => {
     const patchedDoc = await prisma.ToDo.updateMany({
       where: {
         id: +todoid,
-        isDeleted:false
+        isDeleted: false
       },
       data
     })
 
     res.status(200).send({ patchedDoc, message: 'Task updated successfully' })
   } catch (e) {
-    return next(
-      ApiError.internalServerError(
-        e.message
-      )
-    )
+    return next(ApiError.internalServerError(e.message))
   }
 }
 
@@ -129,7 +113,7 @@ const deleteTodo = async (req, res, next) => {
     const delDoc = await prisma.ToDo.updateMany({
       where: {
         id: +todoid,
-        isDeleted:false
+        isDeleted: false
       },
       data: {
         isDeleted: true
@@ -138,11 +122,7 @@ const deleteTodo = async (req, res, next) => {
 
     res.status(204).send({ delDoc, message: 'Task deleted successfully' })
   } catch (e) {
-    return next(
-      ApiError.internalServerError(
-        e.message
-      )
-    )
+    return next(ApiError.internalServerError(e.message))
   }
 }
 
