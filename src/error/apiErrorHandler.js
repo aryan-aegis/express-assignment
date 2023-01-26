@@ -1,20 +1,20 @@
 import ApiError from './ApiError.js'
-import {Prisma } from '@prisma/client'
+import { Prisma } from '@prisma/client'
 
 // eslint-disable-next-line no-unused-vars
 export const apiErrorHandler = (err, req, res, next) => {
   if (err instanceof ApiError) {
-    console.log("here")
+    console.log('here')
     res.status(err.code).json(err.message)
     return req.connection.destroy()
   }
 
   if (err instanceof Prisma.PrismaClientValidationError) {
-    return res.status(400).json("Check fields provided")
+    return res.status(400).json('Check fields provided')
   }
 
-  if(err.code=="P2002")
-  return res.status(400).json("Email or phone should be unique")
+  if (err.code == 'P2002')
+    return res.status(400).json('Email or phone should be unique')
 
   res.status(500).json(err.message)
 }

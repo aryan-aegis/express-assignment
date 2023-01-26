@@ -45,8 +45,7 @@ const loginUserVal = function (req, res, next) {
   }
 
   if (!validateEmail(email))
-  return next(ApiError.badRequest('Please Enter Valid Email'))
-  
+    return next(ApiError.badRequest('Please Enter Valid Email'))
 
   next()
 }

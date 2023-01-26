@@ -22,7 +22,7 @@ const router = Router()
 
 router.post('/', createUserVal, createUser)
 router.post('/login', loginUserVal, loginUser)
-router.patch('/:id',updateUserVal, authentication, authorization, updateUser)
+router.patch('/:id', updateUserVal, authentication, authorization, updateUser)
 router.get('/:id', authentication, getUser)
 //for testing
 router.delete('/:id', authentication, authorization, deleteUser)

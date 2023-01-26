@@ -37,11 +37,13 @@ const loginUser = async function (req, res, next) {
   let { email, password } = req.body
 
   let searchUser = null
-  try{ searchUser = await prisma.user.findFirst({
-    where: {
-      email
-    }
-  })}catch (err) {
+  try {
+    searchUser = await prisma.user.findFirst({
+      where: {
+        email
+      }
+    })
+  } catch (err) {
     return next(err)
   }
   if (!searchUser) return next(ApiError.NotFound('User not found'))
@@ -72,15 +74,17 @@ const updateUser = async (req, res, next) => {
   const id = req.params.id
 
   let user = null
-  try{user = await prisma.user.update({
-    where: { id: +id },
-    data: {
-      email,
-      username,
-      phone,
-      password
-    }
-  })}catch (err) {
+  try {
+    user = await prisma.user.update({
+      where: { id: +id },
+      data: {
+        email,
+        username,
+        phone,
+        password
+      }
+    })
+  } catch (err) {
     return next(err)
   }
 
@@ -94,14 +98,15 @@ const updateUser = async (req, res, next) => {
  */
 const getUser = async function (req, res, next) {
   let data = req.params
-  
+
   let user = null
-  try{ user = await prisma.user.findUnique({
-    where: {
-      id: +data.id
-    }
-  })}
-  catch (err) {
+  try {
+    user = await prisma.user.findUnique({
+      where: {
+        id: +data.id
+      }
+    })
+  } catch (err) {
     return next(err)
   }
 
@@ -115,12 +120,14 @@ const getUser = async function (req, res, next) {
 const deleteUser = async (req, res, next) => {
   const { id } = req.params
 
-  let delDoc=null
-  try{ delDoc = await prisma.User.delete({
-    where: {
-      id: +id
-    }
-  })}catch (err) {
+  let delDoc = null
+  try {
+    delDoc = await prisma.User.delete({
+      where: {
+        id: +id
+      }
+    })
+  } catch (err) {
     return next(err)
   }
 
