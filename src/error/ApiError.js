@@ -15,6 +15,12 @@ class ApiError {
   static NotFound(msg) {
     return new ApiError(404, msg)
   }
+  static authenticationError(msg) {
+    return new ApiError(401, msg)
+  }
+  static authorizationError(msg) {
+    return new ApiError(403, msg)
+  }
 }
 
 export default ApiError

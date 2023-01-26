@@ -6,5 +6,5 @@ export const apiErrorHandler = (err, _req, res, _next) => {
     res.status(err.code).json(err.message)
     return
   }
-  res.status(500).json('Something went wrong!')
+  res.status(500).json(err.message)
 }
