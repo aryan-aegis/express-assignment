@@ -1,0 +1,38 @@
+.done{
+    font-size: 1rem;
+    font-weight: 650;
+    color: black;
+    background-color: green;
+}
+.pending{
+    font-size: 1rem;
+    font-weight: 650;
+    color: black;
+    background-color: palevioletred;
+}
+.allActs{
+    font-size: 2rem;
+    margin: auto;
+    color: white;
+}
+.allActs:hover{
+    cursor: pointer;
+}
+.options{
+    position: relative;
+}
+.TodoOpt{
+    border: 1px solid lightgray;
+    background-color: white;
+    position: absolute;
+    z-index: 8;
+    display: none;
+    top: 2.5rem;
+    left: 3.65rem;
+}
+.allActs:hover + .TodoOpt{
+    display: block;
+}
+.TodoOpt:hover{
+    display: block;
+}

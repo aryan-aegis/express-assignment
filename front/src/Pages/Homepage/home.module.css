@@ -1,0 +1,8 @@
+.home{
+    padding: 0.5rem;
+}
+.home>div::first-letter{
+    font-size: 1.5rem;
+    color: crimson;
+    font-weight: 650;
+}

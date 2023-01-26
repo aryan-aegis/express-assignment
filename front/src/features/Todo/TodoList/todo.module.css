@@ -1,0 +1,26 @@
+.mainTable{
+    border-collapse: collapse;
+    border: 2px solid white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: 70%;
+    margin: auto;
+    margin-top: 10px;
+}
+.mainTable tr{
+    text-align: center;
+}
+.mainTable th, td{
+    padding: 10px;
+    text-align: center;
+    border: 1px solid lightgray;
+}
+.mainTable tr:nth-child(even){
+    background-color: darkmagenta;
+}
+.mainTable tr:nth-child(odd){
+    background-color: darkorchid;
+}
+.mainTable th{
+    background-color: rgb(175, 14, 47);
+}

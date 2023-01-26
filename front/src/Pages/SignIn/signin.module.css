@@ -1,0 +1,41 @@
+.mainForm{
+    width: 50%;
+    margin: auto;
+}
+.subBtn{
+    width: 100%;
+    padding: 10px;
+    color: white;
+    border: 2px solid white;
+    background-color: var(--back);
+    font-weight: 500;
+    font-size: 1.1rem;
+    transition: all 0.5s ease-in-out;
+    border-radius: 6px;
+    margin-top: 10px;
+}
+.subBtn:hover{
+    cursor: pointer;
+    color: var(--back);
+    background-color: white;
+    font-weight: 650;
+}
+
+@media screen and (min-width:800px) and (max-width:1000px) {
+    .mainForm{
+        width: 70%;
+        margin: auto;
+    }
+}
+@media screen and (min-width:600px) and (max-width:800px) {
+    .mainForm{
+        width: 80%;
+        margin: auto;
+    }
+}
+@media screen and (min-width:200px) and (max-width:600px) {
+    .mainForm{
+        width: 90%;
+        margin: auto;
+    }
+}
