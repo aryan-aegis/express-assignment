@@ -17,17 +17,10 @@ const prisma = new PrismaClient()
  * @param {Express.Response} res - Express Response Object
  */
 const createTodo = async (req, res, next) => {
+  const { id } = req.params
   const data = req.body
-  const user = await prisma.user.findUnique({
-    where: {
-      id: +data.userId
-    }
-  })
+  data.userId = +id
 
-  if (!user) {
-    next(ApiError.NotFound('User Does not exist'))
-    return
-  }
   try {
     const newTodo = await prisma.ToDo.create({
       data
@@ -37,7 +30,7 @@ const createTodo = async (req, res, next) => {
   } catch (e) {
     next(
       ApiError.internalServerError(
-        'Something went wrong, Please try again later!'
+        e.message
       )
     )
     return
@@ -51,27 +44,22 @@ const createTodo = async (req, res, next) => {
  */
 const getSingleTodo = async (req, res, next) => {
   let data = req.params
-  const user = await prisma.user.findUnique({
-    where: {
-      id: +data.id
-    }
-  })
-  if (!user) {
-    return next(ApiError.NotFound('User does not exist'))
-  }
+  
   try {
     const uniqueToDo = await prisma.ToDo.findFirst({
       where: {
-        id: +data.id,
+        id: +data.todoid,
         isDeleted: false
       }
     })
+
+    if(!uniqueToDo) next(ApiError.NotFound("Task does not exist"))
 
     res.status(200).send({ uniqueToDo, message: 'successful' })
   } catch (e) {
     return next(
       ApiError.internalServerError(
-        'Something went wrong, Please try again later'
+        e.message
       )
     )
   }
@@ -83,27 +71,23 @@ const getSingleTodo = async (req, res, next) => {
  * @param {Express.Response} res
  */
 const getTodo = async (req, res, next) => {
-  const { userid } = req.params
+  const { id } = req.params
 
-  const user = await prisma.user.findUnique({
-    where: {
-      id: +userid
-    }
-  })
-  if (!user) {
-    return next(ApiError.NotFound('User does not exist'))
-  }
   try {
     const userDocs = await prisma.ToDo.findMany({
       where: {
-        userId: +userid,
+        userId: +id,
         isDeleted: false
       }
     })
 
     res.status(200).send({ userDocs, message: 'get todo done' })
   } catch (e) {
-    return next(ApiError.userNotFound('Task does not exist'))
+    return next(
+      ApiError.internalServerError(
+        e.message
+      )
+    )
   }
 }
 
@@ -116,16 +100,21 @@ const patchTodo = async (req, res, next) => {
   const { todoid } = req.params
   const data = req.body
   try {
-    const patchedDoc = await prisma.ToDo.update({
+    const patchedDoc = await prisma.ToDo.updateMany({
       where: {
-        id: +todoid
+        id: +todoid,
+        isDeleted:false
       },
       data
     })
 
     res.status(200).send({ patchedDoc, message: 'Task updated successfully' })
   } catch (e) {
-    return next(ApiError.NotFound('Task does not exist'))
+    return next(
+      ApiError.internalServerError(
+        e.message
+      )
+    )
   }
 }
 
@@ -137,9 +126,10 @@ const patchTodo = async (req, res, next) => {
 const deleteTodo = async (req, res, next) => {
   const { todoid } = req.params
   try {
-    const delDoc = await prisma.ToDo.update({
+    const delDoc = await prisma.ToDo.updateMany({
       where: {
-        id: +todoid
+        id: +todoid,
+        isDeleted:false
       },
       data: {
         isDeleted: true
@@ -148,7 +138,11 @@ const deleteTodo = async (req, res, next) => {
 
     res.status(204).send({ delDoc, message: 'Task deleted successfully' })
   } catch (e) {
-    return next(ApiError.NotFound('Task does not exist'))
+    return next(
+      ApiError.internalServerError(
+        e.message
+      )
+    )
   }
 }
 

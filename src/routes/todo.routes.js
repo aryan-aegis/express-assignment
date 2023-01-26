@@ -7,16 +7,23 @@ import {
   getSingleTodo
 } from '../controllers/todoController.js'
 
+import {
+  authentication,
+  authorization
+} from '../authentication/authentication.js'
+
+
 let todoRoute = Router()
 
-todoRoute.get('/all/:userid', getTodo)
+todoRoute.get('/all/:id',authentication,authorization, getTodo)
 
-todoRoute.get('/:id', getSingleTodo)
+todoRoute.post('/:id',authentication,authorization, createTodo)
 
-todoRoute.post('/', createTodo)
+todoRoute.get('/:id/:todoid',authentication,authorization, getSingleTodo)
 
-todoRoute.patch('/:todoid', patchTodo)
+//params for adding authorization
+todoRoute.patch('/:id/:todoid',authentication,authorization, patchTodo)
 
-todoRoute.delete('/:todoid', deleteTodo)
+todoRoute.delete('/:id/:todoid',authentication,authorization, deleteTodo)
 
 export default todoRoute
