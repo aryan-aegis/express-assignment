@@ -16,6 +16,9 @@ const createUserVal = function (req, res, next) {
     )
     return
   }
+
+  //add handler for userId pathparam
+
   if (typeof password !== 'string') {
     next(ApiError.badRequest('Please Enter Valid Password'))
     return false
