@@ -72,7 +72,6 @@ const loginUser = async function (req, res, next) {
 const updateUser = async (req, res, next) => {
   const { email, username, phone, password } = req.body
   const id = req.params.id
-
   let user = null
   try {
     user = await prisma.user.update({

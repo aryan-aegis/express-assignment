@@ -2,7 +2,7 @@ import ApiError from '../error/ApiError.js'
 import { validateEmail, validateNumber } from '../validation/userValidation.js'
 
 const createUserVal = function (req, res, next) {
-  let { email, phone } = req.body
+  let { email, phone, password } = req.body
 
   let keyArray = ['username', 'phone', 'email', 'password']
   if (
@@ -15,6 +15,10 @@ const createUserVal = function (req, res, next) {
       )
     )
     return
+  }
+  if (typeof (password) !== "string") {
+    next(ApiError.badRequest('Please Enter Valid Password'))
+    return false
   }
 
   if (!validateEmail(email)) {
@@ -30,7 +34,7 @@ const createUserVal = function (req, res, next) {
 }
 
 const loginUserVal = function (req, res, next) {
-  let { email } = req.body
+  let { email, password } = req.body
 
   let keyArray = ['email', 'password']
   if (
@@ -43,6 +47,10 @@ const loginUserVal = function (req, res, next) {
       )
     )
   }
+  if (typeof (password) !== "string") {
+    next(ApiError.badRequest('Please Enter Valid Password'))
+    return false
+  }
 
   if (!validateEmail(email))
     return next(ApiError.badRequest('Please Enter Valid Email'))
@@ -51,7 +59,7 @@ const loginUserVal = function (req, res, next) {
 }
 
 const updateUserVal = function (req, res, next) {
-  const { email, phone } = req.body
+  const { email, phone, password } = req.body
 
   let keyArray = ['username', 'phone', 'email', 'password']
   if (!Object.keys(req.body).every((elem) => keyArray.includes(elem)))
@@ -60,6 +68,11 @@ const updateUserVal = function (req, res, next) {
         "Keys should be in this format ['username','phone','email']"
       )
     )
+  if(password)
+  if (typeof (password) !== "string") {
+      next(ApiError.badRequest('Please Enter Valid Password'))
+      return false
+    }
 
   if (email)
     if (!validateEmail(email))

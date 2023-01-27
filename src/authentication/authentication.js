@@ -9,11 +9,15 @@ const authentication = async function (req, res, next) {
   let id = req.params.id
 
   //searching for user in each api call with id in path param, remove from others
-  let searchUser = await prisma.user.findFirst({
+  let searchUser = null
+  try{
+   searchUser = await prisma.user.findFirst({
     where: {
       id: +id
     }
   })
+}catch(err)
+{return next(err)}
   if (!searchUser) return next(ApiError.NotFound('User not found'))
 
   jwt.verify(token, process.env.SECRET_KEY, function (err, result) {
