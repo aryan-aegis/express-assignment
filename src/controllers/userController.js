@@ -2,11 +2,7 @@ import { PrismaClient } from '@prisma/client'
 import ApiError from '../error/ApiError.js'
 import bcrypt from 'bcrypt'
 import jwt from 'jsonwebtoken'
-import {
-  createUserVal,
-  loginUserVal,
-  updateUserVal
-} from '../validation/payloadValidation.js'
+
 /**
  * @typedef {Object} userBody
  * @property {string} username - The name of the user
@@ -24,17 +20,14 @@ const prisma = new PrismaClient()
 const createUser = async function (req, res, next) {
   let { username, password, email, phone } = req.body
 
-  createUserVal(req, res, next)
-
   let newUser = null
   password = await bcrypt.hash(password, 10)
-
   try {
     newUser = await prisma.user.create({
       data: { username, password, phone, email }
     })
   } catch (err) {
-    return next(ApiError.internalServerError(err.message))
+    return next(err)
   }
 
   return res.status(201).send({ status: true, newUser })
@@ -43,13 +36,16 @@ const createUser = async function (req, res, next) {
 const loginUser = async function (req, res, next) {
   let { email, password } = req.body
 
-  loginUserVal(req, res, next)
-
-  let searchUser = await prisma.user.findFirst({
-    where: {
-      email
-    }
-  })
+  let searchUser = null
+  try {
+    searchUser = await prisma.user.findFirst({
+      where: {
+        email
+      }
+    })
+  } catch (err) {
+    return next(err)
+  }
   if (!searchUser) return next(ApiError.NotFound('User not found'))
 
   let compare = await bcrypt.compare(password, searchUser.password)
@@ -76,19 +72,20 @@ const loginUser = async function (req, res, next) {
 const updateUser = async (req, res, next) => {
   const { email, username, phone, password } = req.body
   const id = req.params.id
-
-  updateUserVal(req, res, next)
-
   let user = null
-  user = await prisma.user.update({
-    where: { id: +id },
-    data: {
-      email,
-      username,
-      phone,
-      password
-    }
-  })
+  try {
+    user = await prisma.user.update({
+      where: { id: +id },
+      data: {
+        email,
+        username,
+        phone,
+        password
+      }
+    })
+  } catch (err) {
+    return next(err)
+  }
 
   return res.status(200).send({ status: true, user })
 }
@@ -100,11 +97,17 @@ const updateUser = async (req, res, next) => {
  */
 const getUser = async function (req, res, next) {
   let data = req.params
-  const user = await prisma.user.findUnique({
-    where: {
-      id: +data.id
-    }
-  })
+
+  let user = null
+  try {
+    user = await prisma.user.findUnique({
+      where: {
+        id: +data.id
+      }
+    })
+  } catch (err) {
+    return next(err)
+  }
 
   if (!user) return next(ApiError.NotFound('User not found'))
 
@@ -113,14 +116,19 @@ const getUser = async function (req, res, next) {
     .send({ user, message: 'user found with username ' + user.username })
 }
 
-const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
   const { id } = req.params
 
-  const delDoc = await prisma.User.delete({
-    where: {
-      id: +id
-    }
-  })
+  let delDoc = null
+  try {
+    delDoc = await prisma.User.delete({
+      where: {
+        id: +id
+      }
+    })
+  } catch (err) {
+    return next(err)
+  }
 
   return res.status(200).send({ delDoc, message: 'Successfully deleted!' })
 }
