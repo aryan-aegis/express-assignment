@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { request } from 'express'
 
 /**
  * @typedef {Object} todoBody
@@ -17,6 +18,13 @@ const prisma = new PrismaClient()
  */
 const createTodo = async (req, res) => {
   const data = req.body
+  const userExists = await prisma.user.findUnique({
+    where: {
+      id: +data.userId
+  }})
+  if(!userExists){
+    return res.status(500).send({ message: 'Not fullfilled', error: 'User does not exist'})
+  } 
   try {
     const newTodo = await prisma.ToDo.create({
       data
