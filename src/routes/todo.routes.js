@@ -2,7 +2,7 @@ import { Router } from 'express'
 import {
   createTodo,
   deleteTodo,
-  patchTodo,
+  updateTodo,
   getTodo,
   getSingleTodo
 } from '../controllers/todoController.js'
@@ -21,7 +21,7 @@ todoRoute.post('/:id', authentication, authorization, createTodo)
 todoRoute.get('/:id/:todoid', authentication, authorization, getSingleTodo)
 
 //params for adding authorization
-todoRoute.patch('/:id/:todoid', authentication, authorization, patchTodo)
+todoRoute.patch('/:id/:todoid', authentication, authorization, updateTodo)
 
 todoRoute.delete('/:id/:todoid', authentication, authorization, deleteTodo)
 
