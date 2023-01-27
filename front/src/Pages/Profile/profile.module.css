@@ -1,0 +1,21 @@
+.userProfile{
+    width: 20%;
+    margin: auto;
+    border: 2px solid white;
+    border-radius: 6px;
+    margin-top: 1rem;
+    padding: 1rem;
+}
+.userProfile>img{
+    width: 150px;
+    height: 150px;
+    margin: auto;
+    border-radius: 50%;
+}
+.userProfile>div{
+    font-size:1rem;
+    font-weight:500;
+}
+.userProfile>div>div:nth-child(1){
+    margin: 10px 0;
+}

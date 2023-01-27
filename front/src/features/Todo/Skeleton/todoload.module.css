@@ -1,0 +1,16 @@
+.mainTable{
+    border-collapse: collapse;
+    border: 2px solid white;
+    border-radius: 1rem;
+    padding: 1.5rem;
+    width: 70%;
+    margin: auto;
+    margin-top: 10px;
+}
+.mainTable tr{
+    text-align: center;
+}
+.mainTable th, td{
+    padding: 10px;
+    border: 1px solid white;
+}

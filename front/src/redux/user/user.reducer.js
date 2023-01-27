@@ -28,7 +28,7 @@ export const userReducer = (state=initial,{type,payload})=>{
             return {...state,error:true,loading:false}
         }
         case GET_TODO : {
-            return {...state,todo:payload}
+            return {...state,todo:payload,loading:false,error:false}
         }
         default :
             return state

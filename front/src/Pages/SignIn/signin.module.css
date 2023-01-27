@@ -20,6 +20,16 @@
     background-color: white;
     font-weight: 650;
 }
+.infoDiv{
+    margin: auto;
+    width: 100%;
+    margin-top: 10px;
+
+}
+.infoDiv>a{
+    color: orangered;
+    text-decoration: underline solid;
+}
 
 @media screen and (min-width:800px) and (max-width:1000px) {
     .mainForm{
