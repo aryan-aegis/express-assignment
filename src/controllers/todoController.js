@@ -27,9 +27,8 @@ const createTodo = async (req, res, next) => {
     })
 
     res.status(201).send({ newTodo, message: 'Task created successfully' })
-  } catch (e) {
-    next(ApiError.internalServerError(e.message))
-    return
+  } catch (err) {
+    return next(err)
   }
 }
 
@@ -52,8 +51,8 @@ const getSingleTodo = async (req, res, next) => {
     if (!uniqueToDo) next(ApiError.NotFound('Task does not exist'))
 
     res.status(200).send({ uniqueToDo, message: 'successful' })
-  } catch (e) {
-    return next(ApiError.internalServerError(e.message))
+  } catch (err) {
+    return next(err)
   }
 }
 
@@ -74,8 +73,8 @@ const getTodo = async (req, res, next) => {
     })
 
     res.status(200).send({ userDocs, message: 'get todo done' })
-  } catch (e) {
-    return next(ApiError.internalServerError(e.message))
+  } catch (err) {
+    return next(err)
   }
 }
 
@@ -97,8 +96,8 @@ const patchTodo = async (req, res, next) => {
     })
 
     res.status(200).send({ patchedDoc, message: 'Task updated successfully' })
-  } catch (e) {
-    return next(ApiError.internalServerError(e.message))
+  } catch (err) {
+    return next(err)
   }
 }
 
@@ -121,8 +120,8 @@ const deleteTodo = async (req, res, next) => {
     })
 
     res.status(204).send({ delDoc, message: 'Task deleted successfully' })
-  } catch (e) {
-    return next(ApiError.internalServerError(e.message))
+  } catch (err) {
+    return next(err)
   }
 }
 
