@@ -16,7 +16,7 @@ const createUserVal = function (req, res, next) {
     )
     return
   }
-  if (typeof (password) !== "string") {
+  if (typeof password !== 'string') {
     next(ApiError.badRequest('Please Enter Valid Password'))
     return false
   }
@@ -47,7 +47,7 @@ const loginUserVal = function (req, res, next) {
       )
     )
   }
-  if (typeof (password) !== "string") {
+  if (typeof password !== 'string') {
     next(ApiError.badRequest('Please Enter Valid Password'))
     return false
   }
@@ -68,8 +68,8 @@ const updateUserVal = function (req, res, next) {
         "Keys should be in this format ['username','phone','email']"
       )
     )
-  if(password)
-  if (typeof (password) !== "string") {
+  if (password)
+    if (typeof password !== 'string') {
       next(ApiError.badRequest('Please Enter Valid Password'))
       return false
     }
