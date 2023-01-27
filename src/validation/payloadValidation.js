@@ -2,7 +2,7 @@ import ApiError from '../error/ApiError.js'
 import { validateEmail, validateNumber } from '../validation/userValidation.js'
 
 const createUserVal = function (req, res, next) {
-  let { email, phone } = req.body
+  let { email, phone, password } = req.body
 
   let keyArray = ['username', 'phone', 'email', 'password']
   if (
@@ -17,6 +17,13 @@ const createUserVal = function (req, res, next) {
     return
   }
 
+  //add handler for userId pathparam
+
+  if (typeof password !== 'string') {
+    next(ApiError.badRequest('Please Enter Valid Password'))
+    return false
+  }
+
   if (!validateEmail(email)) {
     return next(ApiError.badRequest('Please Enter Valid Email'))
   }
@@ -25,6 +32,8 @@ const createUserVal = function (req, res, next) {
     next(ApiError.badRequest('Please Enter Valid Phone Number'))
     return
   }
+
+  next()
 }
 
 const loginUserVal = function (req, res, next) {
@@ -50,12 +59,19 @@ const loginUserVal = function (req, res, next) {
     next(ApiError.badRequest('Please Enter Valid Email'))
     return false
   }
+  if (typeof password !== 'string') {
+    next(ApiError.badRequest('Please Enter Valid Password'))
+    return false
+  }
 
-  return true
+  if (!validateEmail(email))
+    return next(ApiError.badRequest('Please Enter Valid Email'))
+
+  next()
 }
 
 const updateUserVal = function (req, res, next) {
-  const { email, phone } = req.body
+  const { email, phone, password } = req.body
 
   let keyArray = ['username', 'phone', 'email', 'password']
   if (!Object.keys(req.body).every((elem) => keyArray.includes(elem)))
@@ -64,6 +80,11 @@ const updateUserVal = function (req, res, next) {
         "Keys should be in this format ['username','phone','email']"
       )
     )
+  if (password)
+    if (typeof password !== 'string') {
+      next(ApiError.badRequest('Please Enter Valid Password'))
+      return false
+    }
 
   if (email)
     if (!validateEmail(email))
@@ -72,5 +93,7 @@ const updateUserVal = function (req, res, next) {
   if (phone)
     if (!validateNumber(phone))
       return next(ApiError.badRequest('Please Enter valid phone number'))
+
+  next()
 }
 export { createUserVal, loginUserVal, updateUserVal }
