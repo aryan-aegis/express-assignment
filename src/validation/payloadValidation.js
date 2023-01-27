@@ -28,23 +28,30 @@ const createUserVal = function (req, res, next) {
 }
 
 const loginUserVal = function (req, res, next) {
-  let { email } = req.body
+  let { email, password } = req.body
 
   let keyArray = ['email', 'password']
   if (
     !Object.keys(req.body).every((elem) => keyArray.includes(elem)) ||
     Object.keys(req.body).length != 2
   ) {
-    return next(
+    next(
       ApiError.badRequest(
         "All keys should be given and in this format ['email', 'password']"
       )
     )
+    return false
+  }
+  if (typeof (password) !== "string") {
+    next(ApiError.badRequest('Please Enter Valid Password'))
+    return false
+  }
+  if (!validateEmail(email)) {
+    next(ApiError.badRequest('Please Enter Valid Email'))
+    return false
   }
 
-  if (!validateEmail(email))
-    next(ApiError.badRequest('Please Enter Valid Email'))
-  return
+  return true
 }
 
 const updateUserVal = function (req, res, next) {

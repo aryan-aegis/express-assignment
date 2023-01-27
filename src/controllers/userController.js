@@ -24,8 +24,8 @@ const prisma = new PrismaClient()
 const createUser = async function (req, res, next) {
   let { username, password, email, phone } = req.body
 
-  createUserVal(req, res, next)
-
+  let move = createUserVal(req, res, next)
+  if(!move) return
   let newUser = null
   password = await bcrypt.hash(password, 10)
 
@@ -43,7 +43,8 @@ const createUser = async function (req, res, next) {
 const loginUser = async function (req, res, next) {
   let { email, password } = req.body
 
-  loginUserVal(req, res, next)
+  let move = loginUserVal(req, res, next)
+  if(!move) return
 
   let searchUser = await prisma.user.findFirst({
     where: {
@@ -77,8 +78,8 @@ const updateUser = async (req, res, next) => {
   const { email, username, phone, password } = req.body
   const id = req.params.id
 
-  updateUserVal(req, res, next)
-
+  let move = updateUserVal(req, res, next)
+  if(!move) return
   let user = null
   user = await prisma.user.update({
     where: { id: +id },
