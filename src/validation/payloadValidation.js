@@ -42,7 +42,7 @@ const loginUserVal = function (req, res, next) {
     )
     return false
   }
-  if (typeof (password) !== "string") {
+  if (typeof password !== 'string') {
     next(ApiError.badRequest('Please Enter Valid Password'))
     return false
   }

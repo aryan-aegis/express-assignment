@@ -25,7 +25,7 @@ const createUser = async function (req, res, next) {
   let { username, password, email, phone } = req.body
 
   let move = createUserVal(req, res, next)
-  if(!move) return
+  if (!move) return
   let newUser = null
   password = await bcrypt.hash(password, 10)
 
@@ -44,7 +44,7 @@ const loginUser = async function (req, res, next) {
   let { email, password } = req.body
 
   let move = loginUserVal(req, res, next)
-  if(!move) return
+  if (!move) return
 
   let searchUser = await prisma.user.findFirst({
     where: {
@@ -79,7 +79,7 @@ const updateUser = async (req, res, next) => {
   const id = req.params.id
 
   let move = updateUserVal(req, res, next)
-  if(!move) return
+  if (!move) return
   let user = null
   user = await prisma.user.update({
     where: { id: +id },
