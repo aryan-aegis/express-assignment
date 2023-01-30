@@ -16,17 +16,17 @@ let todoRoute = Router()
 
 //this a how to use a common middlewares who uses request params
 
-todoRoute.get('/all/:id',authentication ,authorization, getTodo)
+todoRoute.get('/all/:id', authentication, authorization, getTodo)
 
-todoRoute.post('/:id', authentication,authorization, createTodo)
+todoRoute.post('/:id', authentication, authorization, createTodo)
 
-todoRoute.use("/:id",authentication)
-todoRoute.use("/:id",authorization)
+todoRoute.use('/:id', authentication)
+todoRoute.use('/:id', authorization)
 
-todoRoute.get('/:id/:todoid',  getSingleTodo)
+todoRoute.get('/:id/:todoid', getSingleTodo)
 //params for adding authorization
-todoRoute.patch('/:id/:todoid',  updateTodo)
+todoRoute.patch('/:id/:todoid', updateTodo)
 
-todoRoute.delete('/:id/:todoid',  deleteTodo)
+todoRoute.delete('/:id/:todoid', deleteTodo)
 
 export default todoRoute
