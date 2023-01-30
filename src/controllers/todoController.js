@@ -22,10 +22,13 @@ const createTodo = async (req, res, next) => {
   const userExists = await prisma.user.findUnique({
     where: {
       id: +data.userId
-  }})
-  if(!userExists){
-    return res.status(500).send({ message: 'Not fullfilled', error: 'User does not exist'})
-  } 
+    }
+  })
+  if (!userExists) {
+    return res
+      .status(500)
+      .send({ message: 'Not fullfilled', error: 'User does not exist' })
+  }
   data.userId = +id
 
   try {
