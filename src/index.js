@@ -5,10 +5,12 @@ import router from './routes/public.routes.js'
 import todoRouter from './routes/todo.routes.js'
 import { apiErrorHandler } from './error/apiErrorHandler.js'
 import ApiError from './error/ApiError.js'
+//import path from "path"
 
 const app = express()
 app.use(express.json())
 app.use(morgan('dev'))
+//app.use(express.static(path.join(process.cwd()+"\\public")));
 
 app.use('/user', router)
 app.use('/todo', todoRouter)

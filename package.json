@@ -22,7 +22,8 @@
     "prepare": "husky install",
     "generateDocs": "jsdoc -r ./src",
     "serveDocs": "pnpm generateDocs && serve out",
-    "test": "jest --watchAll"
+    "test": "jest --watchAll",
+    "addTheClient":"cp -r ./front/dist public"
   },
   "devDependencies": {
     "@babel/core": "^7.20.12",
