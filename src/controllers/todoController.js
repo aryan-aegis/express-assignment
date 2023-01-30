@@ -83,7 +83,7 @@ const getTodo = async (req, res, next) => {
  * @param {Express.Request} req - Express Request Object containing the updated ToDo data {@link todoBody}
  * @param {Express.Response} res - Express Response Object
  */
-const patchTodo = async (req, res, next) => {
+const updateTodo = async (req, res, next) => {
   const { todoid } = req.params
   const data = req.body
   try {
@@ -125,4 +125,4 @@ const deleteTodo = async (req, res, next) => {
   }
 }
 
-export { createTodo, deleteTodo, patchTodo, getTodo, getSingleTodo }
+export { createTodo, deleteTodo, updateTodo, getTodo, getSingleTodo }

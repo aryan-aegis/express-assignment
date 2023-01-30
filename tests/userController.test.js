@@ -1,8 +1,10 @@
 // import {createUser, getUser, updateUser} from './userController.js'
+import  jwt  from 'jsonwebtoken';
 import {validateEmail,validateNumber} from '../src/validation/userValidation.js'
-//why two files?
 const request = require("supertest")
 const baseUrl = "http://localhost:5000"
+import dotenv from "dotenv"
+dotenv.config()
 
 describe('Valid User ', () => {
 
@@ -11,15 +13,20 @@ describe('Valid User ', () => {
     let user ={
         username:"randy12",
         email:"randy@gmail.com",
-        phone:"9182312310"
+        phone:"9182312310",
+        password:"asasfasfasf"
     }
     let response = null
-
+    let token = null
     //create dummy user
     beforeAll(async ()=>{
 
         response = await request(baseUrl).post('/user').send(user)
-        // console.log(response.body)
+        // console.log(response.body, process.env.SECRET_KEY)
+         token =  jwt.sign(
+            response.body.newUser.id.toString(),
+            process.env.SECRET_KEY
+        )
 
     })
 
@@ -46,6 +53,7 @@ describe('Valid User ', () => {
         
         beforeAll(async ()=>{
             getResponse  = await request(baseUrl).get(`/user/${response.body.newUser.id}`)
+            .set({'x-api-key':token})
         })
 
         it("is returning correct status codes", ()=>{
@@ -61,11 +69,13 @@ describe('Valid User ', () => {
         let user ={
             username:"randy_orton",
             email:"randy@gmail.com",
-            phone:"9182312319"
+            phone:"9182312319",
+            password:"asasfasfasf"
         }
         
         beforeAll(async ()=>{
             updateResponse  = await request(baseUrl).patch(`/user/${response.body.newUser.id}`).send(user)
+            .set({'x-api-key':token})
             // console.log(updateResponse)
         })
 
@@ -84,7 +94,9 @@ describe('Valid User ', () => {
     afterAll(async ()=>{
 
         // console.log(response.body.newUser)
-        await request(baseUrl).delete(`/user/${response.body.newUser.id}`)
+        await request(baseUrl).delete(`/user/${response.body.newUser.id}`)            
+        .set({'x-api-key':token})
+
     })
 })
 
@@ -159,4 +171,88 @@ describe('InValid User ', () => {
 
         
     })    
+})
+
+describe('Authentication ', () => {
+
+    jest.setTimeout(30000);
+
+    let user ={
+        username:"randy1233",
+        email:"randy@gmail.com",
+        phone:"9182312310",
+        password:"asasfasfasf"
+    }
+    let response = null
+    let token = null
+    let token_correct = null 
+    //create dummy user
+    beforeAll(async ()=>{
+
+        response = await request(baseUrl).post('/user').send(user)
+         token =  jwt.sign(
+            "200000",
+            process.env.SECRET_KEY
+        )
+        token_correct = jwt.sign(response.body.newUser.id.toString(),
+        process.env.SECRET_KEY)
+    })
+
+    describe("update api", () => {
+
+        describe("authorization", () => {
+            
+            let updateResponse = null
+
+            beforeAll(async () => {
+                updateResponse  = await request(baseUrl).patch(`/user/${response.body.newUser.id}`).send(user)
+                .set({'x-api-key':token})
+            })
+
+            it("is returning correct status codes", ()=>{
+                expect(updateResponse.statusCode).toBe(403);
+                expect(typeof updateResponse.error).toBe("object");
+            })
+    
+        })
+        describe("authentication", () => {
+            
+            let updateResponse = null
+
+            beforeAll(async () => {
+                updateResponse  = await request(baseUrl).patch(`/user/${response.body.newUser.id}`).send(user)
+                .set({'x-api-key':"124124"})
+            })
+
+            it("is returning correct status codes", ()=>{
+                expect(updateResponse.statusCode).toBe(401);
+                expect(typeof updateResponse.error).toBe("object");
+            })
+    
+        })
+    })
+    describe("get api", () => {
+        describe("authentication", () => {
+            
+            let updateResponse = null
+
+            beforeAll(async () => {
+                updateResponse  = await request(baseUrl).get(`/user/${response.body.newUser.id}`)
+                .set({'x-api-key':"124124"})
+            })
+
+            it("is returning correct status codes", ()=>{
+                expect(updateResponse.statusCode).toBe(401);
+                expect(typeof updateResponse.error).toBe("object");
+            })
+    
+        })
+    })
+
+    afterAll(async ()=> {
+        // console.log(token)
+        await request(baseUrl).delete(`/user/${response.body.newUser.id}`)
+        .set({'x-api-key':token_correct})
+    })
+    
 })

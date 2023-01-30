@@ -2,7 +2,7 @@ import { Router } from 'express'
 import {
   createTodo,
   deleteTodo,
-  patchTodo,
+  updateTodo,
   getTodo,
   getSingleTodo
 } from '../controllers/todoController.js'
@@ -14,15 +14,19 @@ import {
 
 let todoRoute = Router()
 
-todoRoute.get('/all/:id', authentication, authorization, getTodo)
+//this a how to use a common middlewares who uses request params
 
-todoRoute.post('/:id', authentication, authorization, createTodo)
+todoRoute.get('/all/:id',authentication ,authorization, getTodo)
 
-todoRoute.get('/:id/:todoid', authentication, authorization, getSingleTodo)
+todoRoute.post('/:id', authentication,authorization, createTodo)
 
+todoRoute.use("/:id",authentication)
+todoRoute.use("/:id",authorization)
+
+todoRoute.get('/:id/:todoid',  getSingleTodo)
 //params for adding authorization
-todoRoute.patch('/:id/:todoid', authentication, authorization, patchTodo)
+todoRoute.patch('/:id/:todoid',  updateTodo)
 
-todoRoute.delete('/:id/:todoid', authentication, authorization, deleteTodo)
+todoRoute.delete('/:id/:todoid',  deleteTodo)
 
 export default todoRoute

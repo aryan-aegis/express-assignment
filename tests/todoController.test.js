@@ -1,5 +1,7 @@
 const request = require("supertest")
 const baseURL = "http://localhost:5000"
+import dotenv from "dotenv"
+dotenv.config()
 
 describe("CREATE /todos", () => {
     const newTodo = {
