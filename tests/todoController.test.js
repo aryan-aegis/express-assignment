@@ -110,3 +110,45 @@ describe("GETALLTODO /todos", () => {
         await request(baseURL).delete(`/todo/${createdToDoagain.id}`);
     })
 })
+
+describe("Invalid CREATE /todos", () => {
+    const newTodo = {
+        userId: 0,
+        content: "Drink water",
+        done: false
+    }
+    let createdToDoMain = null;
+    it("Message should match", async () => {
+        createdToDoMain = await JSON.parse((await request(baseURL).post("/todo").send(newTodo)).text);
+        expect(createdToDoMain).toBe(null);
+        expect(createdToDoMain.message).toBe("Not fullfilled");
+        expect(createdToDoMain.error).toBe("User does not exist");
+    });
+});
+
+describe("Invalid DELETE /todos", () => {
+    const newTodo = {
+    userId: 1,
+    content: "I don't exist",
+    done: false
+    }
+    let createdToDoMain = null;
+    it("Message should match", async () => {
+        createdToDoMain = await JSON.parse((await request(baseURL).delete("/todo/0")).text);
+        expect(createdToDoMain.message).toBe("Not fullfilled");
+        expect(createdToDoMain.error.meta.cause).toBe("Record to update not found.");
+    });
+});
+
+describe("Invalid PATCH /todos", () => {
+    const updateToDo = {
+        userId: 1,
+        content: "Drink water",
+        done: true
+    }
+    it("Should return error", async () => {
+        const response =  await JSON.parse((await request(baseURL).patch(`/todo/0`).send(updateToDo)).text);
+        expect(response.message).toBe("Not fullfilled");
+        expect(response.error.meta.cause).toBe("Record to update not found.");
+    });
+});
