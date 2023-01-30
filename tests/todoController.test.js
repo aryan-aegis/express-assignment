@@ -118,6 +118,7 @@ describe("Invalid CREATE /todos", () => {
     let createdToDoMain = null;
     it("Message should match", async () => {
         createdToDoMain = await JSON.parse((await request(baseURL).post("/todo").send(newTodo)).text);
+        expect(createdToDoMain).toBe(null);
         expect(createdToDoMain.message).toBe("Not fullfilled");
         expect(createdToDoMain.error).toBe("User does not exist");
     });

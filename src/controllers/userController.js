@@ -1,5 +1,7 @@
 import { PrismaClient } from '@prisma/client'
-import {validateEmail,validateNumber} from '../validation/userValidation.js'
+import ApiError from '../error/ApiError.js'
+import bcrypt from 'bcrypt'
+import jwt from 'jsonwebtoken'
 
 /**
  * @typedef {Object} userBody
@@ -15,27 +17,51 @@ const prisma = new PrismaClient()
  * @param {Express.Request} req - Express Request Object containing the User data in the body {@link userBody}
  * @param {Express.Response} res
  */
-export const createUser = async function (req, res) {
-  let data = req.body
+const createUser = async function (req, res, next) {
+  let { username, password, email, phone } = req.body
 
-  let keyArray = ["username","phone","email"]
-  if(!Object.keys(req.body).every((elem) => keyArray.includes(elem)) || Object.keys(req.body).length !=3)
-  return res.status(400).send({message:"All keys should be given and in this format ['username','phone','email'] "})
+  let newUser = null
+  password = await bcrypt.hash(password, 10)
+  try {
+    newUser = await prisma.user.create({
+      data: { username, password, phone, email }
+    })
+  } catch (err) {
+    return next(err)
+  }
 
-  if (!validateEmail(data.email)) 
-    return res.status(400).send({ status: false, message: 'Enter valid email' })
-  if (!validateNumber(data.phone)) 
-    return res.status(400).send({ status: false, message: 'Enter valid phone number' })
+  return res.status(201).send({ status: true, newUser })
+}
 
-    let newUser=null
+const loginUser = async function (req, res, next) {
+  let { email, password } = req.body
 
-    try{ newUser = await prisma.user.create({
-      data
-    })}
-    catch(err)
-    {return res.status(400).send({message:"phonenumber and email should be unique"})}
+  let searchUser = null
+  try {
+    searchUser = await prisma.user.findFirst({
+      where: {
+        email
+      }
+    })
+  } catch (err) {
+    return next(err)
+  }
+  if (!searchUser) return next(ApiError.NotFound('User not found'))
 
-    return res.status(201).send({ status: true, newUser })
+  let compare = await bcrypt.compare(password, searchUser.password)
+  if (!compare) return next(ApiError.badRequest('Please enter valid password'))
+
+  let token = null
+  jwt.sign(
+    searchUser.id.toString(),
+    process.env.SECRET_KEY,
+    function (err, result) {
+      if (err) return next(ApiError.badRequest(err.message))
+
+      token = result
+      return res.status(200).send({ message: 'login successful', token })
+    }
+  )
 }
 
 /**
@@ -43,31 +69,25 @@ export const createUser = async function (req, res) {
  * @param {Express.Request} req - Express Request Object containing the User data in the body {@link userBody}
  * @param {Express.Response} res
  */
-export const updateUser = async (req, res) => {
-  const { email, username, phone } = req.body
+const updateUser = async (req, res, next) => {
+  const { email, username, phone, password } = req.body
   const id = req.params.id
-
-  let keyArray = ["username","phone","email"]
-  if(!Object.keys(req.body).every((elem) => keyArray.includes(elem)))
-  return res.status(400).send({message:"Keys should be in this format ['username','phone','email'] "})
-
-
-  if (!validateEmail(email)) 
-    return res.status(400).send({ status: false, message: 'Enter valid email' })
-  if (!validateNumber(phone)) 
-    return res.status(400).send({ status: false, message: 'Enter valid phone number' })
- 
-    let user=null
-   try{  user = await prisma.user.update({
-      where: { id:+id },
+  let user = null
+  try {
+    user = await prisma.user.update({
+      where: { id: +id },
       data: {
         email,
         username,
-        phone
+        phone,
+        password
       }
-    })}catch(err)
-    {return res.status(404).send({message:"User not found with given id"})}
-    return res.status(200).send({ status: true, user })
+    })
+  } catch (err) {
+    return next(err)
+  }
+
+  return res.status(200).send({ status: true, user })
 }
 
 /**
@@ -75,30 +95,42 @@ export const updateUser = async (req, res) => {
  * @param {Express.Request} req
  * @param {Express.Response} res
  */
-export const getUser = async function (req, res) {
+const getUser = async function (req, res, next) {
   let data = req.params
-    const user = await prisma.user.findUnique({
+
+  let user = null
+  try {
+    user = await prisma.user.findUnique({
       where: {
         id: +data.id
-    }})
+      }
+    })
+  } catch (err) {
+    return next(err)
+  }
 
-    if(!user)
-    return res.status(404).send({message:"user not found"})
+  if (!user) return next(ApiError.NotFound('User not found'))
 
-    return res
-      .status(200)
-      .send({ user, message: 'user found with username ' + user.username })
-
+  return res
+    .status(200)
+    .send({ user, message: 'user found with username ' + user.username })
 }
 
-export const deleteUser = async (req, res) => {
+const deleteUser = async (req, res, next) => {
   const { id } = req.params
 
-    const delDoc = await prisma.User.delete({
+  let delDoc = null
+  try {
+    delDoc = await prisma.User.delete({
       where: {
         id: +id
       }
     })
+  } catch (err) {
+    return next(err)
+  }
 
-    return res.status(200).send({ delDoc, message: 'todo deleted' })
+  return res.status(200).send({ delDoc, message: 'Successfully deleted!' })
 }
+
+export { createUser, updateUser, deleteUser, getUser, loginUser }
